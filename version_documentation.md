@@ -4,6 +4,17 @@ All versions, dates, and detailed change logs for Kaj Tracker are maintained in 
 
 ---
 
+## [ver 1.0.3] - 2026-10-28
+### Status: Business Rule Update - Owner-Exclusive Expense Reimbursement
+- **Reimbursement Authorization Change:**
+  - Shifted reimbursement authority exclusively to the expense owner (`costing.userId === currentUser.uid`).
+  - Server validation in [`api/costings.ts`](file:///e:/Projects/Kaj%20Tracker/api/costings.ts): Only the user matching the costing's `userId` can execute `action === 'REIMBURSE'`; attempts by non-owners are rejected with HTTP 403 Forbidden.
+  - Client state store in [`src/services/storage.ts`](file:///e:/Projects/Kaj%20Tracker/src/services/storage.ts): Rejection with `Error('Only the expense owner can reimburse this personal expense')` if a non-owner invokes reimbursement.
+  - UI visibility in [`RecentExpensesTable.tsx`](file:///e:/Projects/Kaj%20Tracker/src/components/dashboard/RecentExpensesTable.tsx) and [`ExpensesPage.tsx`](file:///e:/Projects/Kaj%20Tracker/src/pages/ExpensesPage.tsx): The `Reimburse` action button now only renders on a row if the currently logged-in user is the owner of that expense (`c.userId === currentUser.uid`).
+  - Unit tests updated in [`tests/mathEngine.test.ts`](file:///e:/Projects/Kaj%20Tracker/tests/mathEngine.test.ts): Verified that owner reimbursement succeeds and third-party reimbursement fails.
+
+---
+
 ## [ver 1.0.2] - 2026-10-28
 ### Status: Global Admin Designation & Vercel Production Readiness
 - **Global Administrator Update:**

@@ -26,8 +26,8 @@
    - **Work Admin:** The creator of the Work (`createdBy`). Can edit the work details, assign users, view reports, and reimburse personal expenses.
    - **Users:** Assigned members of a work. Can log personal or budget expenses, update their own investment number, view reports, and export PDFs.
 3. **Reimbursements:**
-   - Only a Work Admin or Main Admin can reimburse personal expenses.
-   - Reimbursement is full amount, marking `reimbursedAt` (timestamp) and `reimbursedBy` (admin identifier).
+   - Reimbursement can be performed ONLY by the expense owner (`costing.userId === currentUser.uid`).
+   - Reimbursement is full amount, marking `reimbursedAt` (timestamp) and `reimbursedBy` (the owner's user identifier).
    - Once reimbursed, that expense counts as "Spent from Budget" and increases "Total Expense".
    - Reimbursement actions are recorded in the `AuditLog` sheet.
 4. **Localization (Bangla First):**

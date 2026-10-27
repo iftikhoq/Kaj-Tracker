@@ -31,6 +31,7 @@ const STORAGE_KEYS = {
 // Helper to get from localStorage or initialize with seed data
 function getStored<T>(key: string, initialData: T): T {
   try {
+    if (typeof localStorage === 'undefined') return initialData;
     const item = localStorage.getItem(key);
     if (!item) {
       localStorage.setItem(key, JSON.stringify(initialData));
@@ -45,6 +46,7 @@ function getStored<T>(key: string, initialData: T): T {
 
 function setStored<T>(key: string, data: T): void {
   try {
+    if (typeof localStorage === 'undefined') return;
     localStorage.setItem(key, JSON.stringify(data));
   } catch (err) {
     console.error(`Error writing ${key} to storage:`, err);

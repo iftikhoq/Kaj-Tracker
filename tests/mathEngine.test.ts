@@ -5,6 +5,7 @@ import {
   calculateCategorySummaries,
   reimburseCosting,
 } from '../src/services/mathEngine';
+import { dataStore } from '../src/services/storage';
 import { Work, Costing, WorkUser, User, Reason } from '../src/types/models';
 
 describe('Kaj Tracker Financial Math Engine', () => {
@@ -249,6 +250,27 @@ describe('Kaj Tracker Financial Math Engine', () => {
     expect(stats.remainingBudget).toBe(-20000);
     expect(stats.isOverBudget).toBe(true);
     expect(stats.budgetUtilizationPercent).toBe(120);
+  });
+
+  it('enforces that reimbursement can be performed ONLY by the expense owner', () => {
+    // Add a personal costing owned by user_rahim
+    const personalCosting = dataStore.addCosting({
+      workId: 'work-dhaka-corp',
+      userId: 'user_rahim',
+      reasonId: 'r5',
+      costAmount: 5000,
+      source: 'PERSONAL',
+    });
+
+    // An admin or other user tries to reimburse -> MUST FAIL
+    expect(() => {
+      dataStore.reimburseCosting(personalCosting.costingId, 'user_ifti_admin');
+    }).toThrow('Only the expense owner can reimburse this personal expense');
+
+    // The actual owner reimburses -> MUST SUCCEED
+    const reimbursed = dataStore.reimburseCosting(personalCosting.costingId, 'user_rahim');
+    expect(reimbursed.reimbursedBy).toBe('user_rahim');
+    expect(Boolean(reimbursed.reimbursedAt)).toBe(true);
   });
 });
 

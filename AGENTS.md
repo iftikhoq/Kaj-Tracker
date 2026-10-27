@@ -28,6 +28,7 @@
 5. **Permissions & Work Scopes:**
    - Global Main Admin is identified by `MAIN_ADMIN_EMAIL`.
    - Work Admin is identified by `createdBy` in the `Works` sheet tab.
-   - Only a Work Admin or Main Admin can reimburse personal expenses or manage member assignments for a work.
+   - Reimbursement can be performed ONLY by the expense owner (`costing.userId === currentUser.uid`).
+   - Work Admin or Main Admin can manage member assignments for a work.
    - Non-assigned users cannot view work data and must see a waiting screen.
 

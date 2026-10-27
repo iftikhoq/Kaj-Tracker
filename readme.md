@@ -14,7 +14,7 @@ Best of all: it uses **Google Sheets** as its primary database, so all your data
   - Budgets, expenses, remaining funds, and personal spending are always dynamically calculated—never stored as stale counters.
   - Clear separation between **Budget Expenses** (company funds) and **Personal Spending** (out-of-pocket costs).
 - **Reimbursement Workflow:**
-  - When members spend out-of-pocket, work admins can reimburse the expense with a single click.
+  - When members spend out-of-pocket, the expense owner can mark the expense as reimbursed with a single click.
   - Reimbursing smoothly transitions the amount from personal spending to budget expense, automatically adjusting project totals.
 - **Executive Console Design:**
   - Premium dashboard featuring context-aware top headers, dynamic greetings, live clocks, and multi-layered depth cards.
