@@ -222,26 +222,29 @@ export const dataStore = {
     });
   },
 
-  reimburseCosting(costingId: string, adminUserId: string): Costing {
+  reimburseCosting(costingId: string, currentUserId: string): Costing {
     const costings = getStored<Costing[]>(STORAGE_KEYS.COSTINGS, INITIAL_COSTINGS);
     const costing = costings.find((c) => c.costingId === costingId);
     if (!costing) throw new Error('Costing record not found');
     if (costing.source !== 'PERSONAL') throw new Error('Only personal expenses can be reimbursed');
     if (costing.reimbursedAt) throw new Error('Already reimbursed');
+    if (costing.userId !== currentUserId) {
+      throw new Error('Only the expense owner can reimburse this personal expense');
+    }
 
     const timestamp = new Date().toISOString();
     costing.reimbursedAt = timestamp;
-    costing.reimbursedBy = adminUserId;
+    costing.reimbursedBy = currentUserId;
 
     setStored(STORAGE_KEYS.COSTINGS, costings);
 
     this.logAudit({
       timestamp,
-      userId: adminUserId,
+      userId: currentUserId,
       action: 'REIMBURSE',
       entity: `Costing/${costingId}`,
       before: 'reimbursedAt=null',
-      after: `reimbursedAt=${timestamp}, reimbursedBy=${adminUserId}`,
+      after: `reimbursedAt=${timestamp}, reimbursedBy=${currentUserId}`,
     });
 
     return costing;
