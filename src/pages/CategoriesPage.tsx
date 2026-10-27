@@ -6,8 +6,9 @@ import { api } from '../services/api';
 import { CategorySummary } from '../types/models';
 import { formatCurrency, formatNumber } from '../utils/formatters';
 import { CategoryPieChart } from '../components/dashboard/CategoryPieChart';
-import { PieChart, Tag, ArrowUpRight } from 'lucide-react';
+import { PieChart, Tag, ArrowUpRight, Briefcase, Plus } from 'lucide-react';
 import { toast } from 'sonner';
+import { Link } from 'react-router-dom';
 
 export const getCategoryDisplayName = (c: CategorySummary, lang: string): string => {
   if (lang === 'bn' && c.reasonNameBn && c.reasonNameBn !== c.reasonId) {
@@ -56,6 +57,29 @@ export const CategoriesPage: React.FC = () => {
   }, [activeWork?.workId]);
 
   const totalExpense = categories.reduce((sum, c) => sum + c.totalCost, 0);
+
+  if (!activeWork) {
+    return (
+      <div className="card-depth p-12 text-center flex flex-col items-center justify-center">
+        <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 mb-4">
+          <Briefcase size={32} />
+        </div>
+        <h3 className="text-lg font-bold text-slate-800">{t('banner.noWorkSelected')}</h3>
+        <p className="text-xs text-slate-500 mt-1 max-w-sm">
+          {lang === 'bn'
+            ? 'আপনাকে এখনও কোনো কাজে যুক্ত করা হয়নি অথবা কোনো কাজ নির্বাচন করা হয়নি।'
+            : 'You are not assigned to any work yet or no work is selected.'}
+        </p>
+        <Link
+          to="/works"
+          className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700"
+        >
+          <Plus size={16} />
+          <span>{lang === 'bn' ? 'কাজের তালিকা / নতুন কাজ' : 'Work List / New Work'}</span>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

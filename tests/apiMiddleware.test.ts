@@ -53,16 +53,16 @@ describe('API Auth & Work Permissions Middleware', () => {
     expect(authContext.email).toBe('ifti.k.hoq@gmail.com');
   });
 
-  it('allows all authenticated users to view dashboard and work details', () => {
+  it('restricts unassigned users from accessing a work (isAllowed = false)', () => {
     const unassignedUser: AuthUserContext = {
       uid: 'unassigned_guy',
       email: 'member@example.com',
-      name: 'New Member',
+      name: 'Unassigned Member',
       isMainAdmin: false,
     };
 
     const perm = checkWorkPermission(unassignedUser, 'work-1', 'creator_user', ['user_member']);
-    expect(perm.isAllowed).toBe(true);
+    expect(perm.isAllowed).toBe(false);
     expect(perm.isWorkAdmin).toBe(false);
   });
 });

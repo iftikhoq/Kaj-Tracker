@@ -85,7 +85,17 @@ export const dataStore = {
   getWorks(user?: User | null): Work[] {
     const works = getStored<Work[]>(STORAGE_KEYS.WORKS, INITIAL_WORKS);
     if (!user) return [];
-    return works;
+    if (user.role === 'main_admin') {
+      return works;
+    }
+
+    const workUsers = this.getWorkUsers();
+    const assignedWorkIds = new Set(
+      workUsers.filter((wu) => wu.userId === user.uid).map((wu) => wu.workId)
+    );
+
+    // Can only see works created by them OR assigned to them
+    return works.filter((w) => w.createdBy === user.uid || assignedWorkIds.has(w.workId));
   },
 
   getWorkById(workId: string): Work | undefined {
@@ -129,6 +139,12 @@ export const dataStore = {
 
   updateInvestment(workId: string, userId: string, investment: number): WorkUser {
     return this.assignUserToWork(workId, userId, investment);
+  },
+
+  removeUserFromWork(workId: string, userId: string): void {
+    const list = getStored<WorkUser[]>(STORAGE_KEYS.WORK_USERS, INITIAL_WORK_USERS);
+    const updated = list.filter((wu) => !(wu.workId === workId && wu.userId === userId));
+    setStored(STORAGE_KEYS.WORK_USERS, updated);
   },
 
   // Costings

@@ -4,6 +4,25 @@ All versions, dates, and detailed change logs for Kaj Tracker are maintained in 
 
 ---
 
+## [ver 1.1.1] - 2026-10-28
+### Status: Member Removal, Work Scope Scoping & Assign Modal Filtering
+- **Member Removal from Work (`DELETE /api/users`):**
+  - Implemented `DELETE /api/users` endpoint to unassign and remove a member from a work:
+    - Verifies permissions so only the Work Admin (project creator) or Main Admin can remove members.
+    - Prevents accidental removal of the project creator.
+    - Safely deletes the member row from the `WorkUsers` tab in Google Sheets using `deleteDimension` (with fallback to row clear), logs the event in `AuditLog`, and clears cache.
+  - Added "সদস্য সরান" (Remove) action button and confirmation modal in [`UsersPage.tsx`](file:///e:/Projects/Kaj%20Tracker/src/pages/UsersPage.tsx).
+  - Added `api.removeUser` in [`src/services/api.ts`](file:///e:/Projects/Kaj%20Tracker/src/services/api.ts) and `dataStore.removeUserFromWork` in [`src/services/storage.ts`](file:///e:/Projects/Kaj%20Tracker/src/services/storage.ts).
+- **Strict Work Scoping (User sees only their assigned works):**
+  - Updated [`api/works.ts`](file:///e:/Projects/Kaj%20Tracker/api/works.ts) `GET` and [`src/services/storage.ts`](file:///e:/Projects/Kaj%20Tracker/src/services/storage.ts) so non-admin users only see works they created or were assigned to.
+  - Updated [`api/_lib/authMiddleware.ts`](file:///e:/Projects/Kaj%20Tracker/api/_lib/authMiddleware.ts) `checkWorkPermission` to restrict access for unassigned users (`isAllowed: false`).
+  - Added graceful empty state banners with navigation links to [`UsersPage.tsx`](file:///e:/Projects/Kaj%20Tracker/src/pages/UsersPage.tsx), [`ExpensesPage.tsx`](file:///e:/Projects/Kaj%20Tracker/src/pages/ExpensesPage.tsx), [`CategoriesPage.tsx`](file:///e:/Projects/Kaj%20Tracker/src/pages/CategoriesPage.tsx), and [`ReportsPage.tsx`](file:///e:/Projects/Kaj%20Tracker/src/pages/ReportsPage.tsx) when a user has no assigned works.
+- **Assign Member Dropdown Filtering:**
+  - Updated [`UsersPage.tsx`](file:///e:/Projects/Kaj%20Tracker/src/pages/UsersPage.tsx) to filter out users who are already assigned to the active work (`allSystemUsers.filter(u => !assignedUserIds.has(u.uid))`).
+  - Displays an informative alert when all registered users are already members of the work, preventing duplicate additions.
+
+---
+
 ## [ver 1.1.0] - 2026-10-28
 ### Status: Real Category Name Display, Live Investment Editing, User Sync & Role Visibility Permissions
 - **Category Name Display Resolution (Fixing `r1`, `r2`, `r3` display):**

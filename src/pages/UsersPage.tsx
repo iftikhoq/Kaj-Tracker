@@ -3,19 +3,21 @@ import { useTranslation } from 'react-i18next';
 import { useWork } from '../context/WorkContext';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
-import { dataStore } from '../services/storage';
 import { User, UserExpenseSummary } from '../types/models';
 import { formatCurrency } from '../utils/formatters';
 import { Modal } from '../components/common/Modal';
+import { Link } from 'react-router-dom';
 import {
   Users as UsersIcon,
   UserPlus,
+  UserMinus,
   Edit2,
   Check,
   X,
   PiggyBank,
-  ShieldCheck,
-  UserCheck,
+  Briefcase,
+  AlertCircle,
+  Plus,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -37,6 +39,9 @@ export const UsersPage: React.FC = () => {
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState('');
   const [initialInvestment, setInitialInvestment] = useState('0');
+
+  // Remove user state
+  const [userToRemove, setUserToRemove] = useState<{ id: string; name: string } | null>(null);
 
   const loadData = async () => {
     if (!activeWork || !currentUser) return;
@@ -73,7 +78,7 @@ export const UsersPage: React.FC = () => {
     if (!activeWork) return;
     const amount = parseFloat(editAmount);
     if (isNaN(amount) || amount < 0) {
-      toast.error('সঠিক পরিমাণ দিন');
+      toast.error(lang === 'bn' ? 'সঠিক পরিমাণ দিন' : 'Please enter a valid amount');
       return;
     }
 
@@ -102,6 +107,52 @@ export const UsersPage: React.FC = () => {
       toast.error(err.message || t('common.error'));
     }
   };
+
+  const handleConfirmRemove = async () => {
+    if (!activeWork || !userToRemove) return;
+    try {
+      setLoading(true);
+      await api.removeUser(activeWork.workId, userToRemove.id);
+      toast.success(
+        lang === 'bn'
+          ? `${userToRemove.name}-কে কাজ থেকে সরানো হয়েছে`
+          : `Removed ${userToRemove.name} from work`
+      );
+      setUserToRemove(null);
+      await loadData();
+    } catch (err: any) {
+      toast.error(err.message || t('common.error'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Filter out users who are ALREADY assigned to this work
+  const assignedUserIds = new Set(summaries.map((s) => s.userId));
+  const unassignedUsers = allSystemUsers.filter((u) => !assignedUserIds.has(u.uid));
+
+  if (!activeWork) {
+    return (
+      <div className="card-depth p-12 text-center flex flex-col items-center justify-center">
+        <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 mb-4">
+          <Briefcase size={32} />
+        </div>
+        <h3 className="text-lg font-bold text-slate-800">{t('banner.noWorkSelected')}</h3>
+        <p className="text-xs text-slate-500 mt-1 max-w-sm">
+          {lang === 'bn'
+            ? 'আপনাকে এখনও কোনো কাজে যুক্ত করা হয়নি অথবা কোনো কাজ নির্বাচন করা হয়নি।'
+            : 'You are not assigned to any work yet or no work is selected.'}
+        </p>
+        <Link
+          to="/works"
+          className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700"
+        >
+          <Plus size={16} />
+          <span>{lang === 'bn' ? 'কাজের তালিকা / নতুন কাজ' : 'Work List / New Work'}</span>
+        </Link>
+      </div>
+    );
+  }
 
   const totalInvestment = summaries.reduce((sum, s) => sum + s.investment, 0);
 
@@ -157,14 +208,15 @@ export const UsersPage: React.FC = () => {
                 <th className="p-4 text-right">{t('users.actions')}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 font-medium">
               {summaries.map((s) => {
                 const isMe = s.userId === currentUser?.uid;
                 const editable = canEditUser(s.userId);
                 const isEditing = editingUserId === s.userId;
+                const isWorkCreator = s.userId === activeWork.createdBy;
 
                 return (
-                  <tr key={s.userId} className={`hover:bg-slate-50/80 transition-colors ${isMe ? 'bg-emerald-50/30' : ''}`}>
+                  <tr key={s.userId} className="hover:bg-slate-50/80 transition-colors">
                     <td className="p-4">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs">
@@ -173,7 +225,12 @@ export const UsersPage: React.FC = () => {
                         <div>
                           <div className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
                             <span>{s.userName}</span>
-                            {isMe && (
+                            {isWorkCreator && (
+                              <span className="px-1.5 py-0.5 rounded text-2xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                                {lang === 'bn' ? 'কাজের অ্যাডমিন' : 'Work Admin'}
+                              </span>
+                            )}
+                            {isMe && !isWorkCreator && (
                               <span className="px-1.5 py-0.5 rounded text-2xs font-bold bg-emerald-100 text-emerald-800">
                                 {lang === 'bn' ? 'আপনি' : 'You'}
                               </span>
@@ -197,13 +254,13 @@ export const UsersPage: React.FC = () => {
                           />
                           <button
                             onClick={() => handleSaveInvestment(s.userId)}
-                            className="p-1 rounded bg-emerald-600 text-white"
+                            className="p-1 rounded bg-emerald-600 text-white hover:bg-emerald-700"
                           >
                             <Check size={13} />
                           </button>
                           <button
                             onClick={() => setEditingUserId(null)}
-                            className="p-1 rounded bg-slate-200 text-slate-600"
+                            className="p-1 rounded bg-slate-200 text-slate-600 hover:bg-slate-300"
                           >
                             <X size={13} />
                           </button>
@@ -228,15 +285,27 @@ export const UsersPage: React.FC = () => {
                     </td>
 
                     <td className="p-4 text-right">
-                      {editable && !isEditing && (
-                        <button
-                          onClick={() => handleStartEdit(s)}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold text-emerald-700 hover:bg-emerald-50 transition-colors"
-                        >
-                          <Edit2 size={12} />
-                          <span>{t('users.editInvestment')}</span>
-                        </button>
-                      )}
+                      <div className="flex items-center justify-end gap-1.5">
+                        {editable && !isEditing && (
+                          <button
+                            onClick={() => handleStartEdit(s)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold text-emerald-700 hover:bg-emerald-50 transition-colors"
+                          >
+                            <Edit2 size={12} />
+                            <span>{t('users.editInvestment')}</span>
+                          </button>
+                        )}
+                        {(isWorkAdmin || isMainAdmin) && !isWorkCreator && (
+                          <button
+                            onClick={() => setUserToRemove({ id: s.userId, name: s.userName })}
+                            className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors"
+                            title={lang === 'bn' ? 'কাজ থেকে সদস্যকে সরান' : 'Remove user from work'}
+                          >
+                            <UserMinus size={13} />
+                            <span>{lang === 'bn' ? 'সরান' : 'Remove'}</span>
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 );
@@ -257,26 +326,38 @@ export const UsersPage: React.FC = () => {
         <form onSubmit={handleAssignMember} className="space-y-4 text-xs">
           <div>
             <label className="font-semibold text-slate-700 block mb-1">
-              সদস্য নির্বাচন করুন / Select Member *
+              {lang === 'bn' ? 'নতুন সদস্য নির্বাচন করুন *' : 'Select New Member *'}
             </label>
-            <select
-              required
-              value={selectedUserId}
-              onChange={(e) => setSelectedUserId(e.target.value)}
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
-            >
-              <option value="">— সদস্য বেছে নিন —</option>
-              {allSystemUsers.map((u) => (
-                <option key={u.uid} value={u.uid}>
-                  {u.name_bn || u.name} ({u.email})
-                </option>
-              ))}
-            </select>
+
+            {unassignedUsers.length === 0 ? (
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-xs flex items-center gap-2">
+                <AlertCircle size={16} className="shrink-0 text-amber-600" />
+                <span>
+                  {lang === 'bn'
+                    ? 'সকল নিবন্ধিত সদস্য ইতিমধ্যেই এই কাজে যুক্ত আছেন।'
+                    : 'All registered users are already members of this work.'}
+                </span>
+              </div>
+            ) : (
+              <select
+                required
+                value={selectedUserId}
+                onChange={(e) => setSelectedUserId(e.target.value)}
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
+              >
+                <option value="">{lang === 'bn' ? '— সদস্য বেছে নিন —' : '— Choose a member —'}</option>
+                {unassignedUsers.map((u) => (
+                  <option key={u.uid} value={u.uid}>
+                    {u.name_bn || u.name} ({u.email})
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
 
           <div>
             <label className="font-semibold text-slate-700 block mb-1">
-              প্রাথমিক বিনিয়োগ (৳) / Initial Investment
+              {lang === 'bn' ? 'প্রাথমিক বিনিয়োগ (৳)' : 'Initial Investment (৳)'}
             </label>
             <input
               type="number"
@@ -284,6 +365,7 @@ export const UsersPage: React.FC = () => {
               value={initialInvestment}
               onChange={(e) => setInitialInvestment(e.target.value)}
               className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-bold text-sm"
+              disabled={unassignedUsers.length === 0}
             />
           </div>
 
@@ -297,14 +379,47 @@ export const UsersPage: React.FC = () => {
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+              disabled={unassignedUsers.length === 0 || !selectedUserId}
+              className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {t('common.save')}
             </button>
           </div>
         </form>
       </Modal>
+
+      {/* Confirmation Modal for Removing Member */}
+      <Modal
+        isOpen={Boolean(userToRemove)}
+        onClose={() => setUserToRemove(null)}
+        title={lang === 'bn' ? 'সদস্য অপসারণ নিশ্চিতকরণ' : 'Confirm Member Removal'}
+        icon={<UserMinus size={18} className="text-red-600" />}
+        maxWidth="max-w-sm"
+      >
+        <div className="space-y-4 text-xs">
+          <p className="text-slate-700 text-sm">
+            {lang === 'bn'
+              ? `আপনি কি নিশ্চিতভাবে "${userToRemove?.name}"-কে এই কাজ থেকে বাদ দিতে চান?`
+              : `Are you sure you want to remove "${userToRemove?.name}" from this work?`}
+          </p>
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">
+            <button
+              type="button"
+              onClick={() => setUserToRemove(null)}
+              className="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 font-medium"
+            >
+              {t('common.cancel')}
+            </button>
+            <button
+              type="button"
+              onClick={handleConfirmRemove}
+              className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold"
+            >
+              {lang === 'bn' ? 'হ্যাঁ, সরান' : 'Yes, Remove'}
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
-

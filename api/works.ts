@@ -32,8 +32,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         isCompleted: r[8] === 'TRUE' || r[8] === 'true',
       }));
 
-      // Return all works so every signed-in user can view dashboard and project details
-      return res.status(200).json({ works: allWorks });
+      // Main Admin sees all works
+      if (authUser.isMainAdmin) {
+        return res.status(200).json({ works: allWorks });
+      }
+
+      // If a user is not in a work (not creator and not assigned), they should NOT see the work
+      const assignedWorkIds = new Set(
+        workUserRows.filter((r) => r[1] === authUser.uid).map((r) => r[0])
+      );
+
+      const accessibleWorks = allWorks.filter(
+        (w) => w.createdBy === authUser.uid || assignedWorkIds.has(w.workId)
+      );
+
+      return res.status(200).json({ works: accessibleWorks });
     }
 
     if (req.method === 'POST') {

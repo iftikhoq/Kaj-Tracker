@@ -45,6 +45,7 @@ export const WorkProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.setItem('kaj_active_work_id', userWorks[0].workId);
       } else {
         setActiveWorkState(null);
+        localStorage.removeItem('kaj_active_work_id');
       }
     } catch (err) {
       console.error('Error loading works:', err);

@@ -272,6 +272,21 @@ export const api = {
     return { workId, userId, investment };
   },
 
+  async removeUser(workId: string, userId: string): Promise<void> {
+    dataStore.removeUserFromWork(workId, userId);
+    if (!isLiveBackendAvailable()) {
+      return;
+    }
+    const res = await fetch(`/api/users?workId=${workId}&userId=${userId}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Failed to remove user from work');
+    }
+  },
+
   // Shared Categories & Metrics
   async getReasons(): Promise<Reason[]> {
     if (!isLiveBackendAvailable()) {

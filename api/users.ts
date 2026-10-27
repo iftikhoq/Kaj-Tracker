@@ -197,6 +197,86 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(200).json({ success: true, investment: Number(investment) });
     }
 
+    if (req.method === 'DELETE') {
+      const workId = (req.query.workId as string) || req.body?.workId;
+      const userId = (req.query.userId as string) || req.body?.userId;
+
+      if (!workId || !userId) {
+        return res.status(400).json({ error: 'workId and userId are required' });
+      }
+
+      const allTabs = await batchReadAllTabs(spreadsheetId, true);
+      const work = (allTabs[SHEET_TABS.WORKS] || []).find((r) => r[0] === workId);
+      if (!work) return res.status(404).json({ error: 'Work not found' });
+
+      // Permission check: Only Work Admin or Main Admin can remove members
+      const isWorkAdmin = work[7] === authUser.uid;
+      if (!isWorkAdmin && !authUser.isMainAdmin) {
+        return res.status(403).json({ error: 'Only Work Admin or Main Admin can remove members from this work' });
+      }
+
+      // Creator of the work cannot be removed from their own work
+      if (userId === work[7] && !authUser.isMainAdmin) {
+        return res.status(400).json({ error: 'The work creator cannot be removed from their own work' });
+      }
+
+      const sheetsClient = getGoogleSheetsClient();
+      const meta = await sheetsClient.spreadsheets.get({ spreadsheetId });
+      const workUsersSheet = (meta.data.sheets || []).find(
+        (s) => s.properties?.title === SHEET_TABS.WORK_USERS
+      );
+      const sheetIdNum = workUsersSheet?.properties?.sheetId;
+
+      const resData = await sheetsClient.spreadsheets.values.get({
+        spreadsheetId,
+        range: `${SHEET_TABS.WORK_USERS}!A:C`,
+      });
+
+      const rows = resData.data.values || [];
+      const rowIndex = rows.findIndex((r: any) => r[0] === workId && r[1] === userId);
+
+      if (rowIndex !== -1) {
+        if (sheetIdNum !== undefined) {
+          await sheetsClient.spreadsheets.batchUpdate({
+            spreadsheetId,
+            requestBody: {
+              requests: [
+                {
+                  deleteDimension: {
+                    range: {
+                      sheetId: sheetIdNum,
+                      dimension: 'ROWS',
+                      startIndex: rowIndex,
+                      endIndex: rowIndex + 1,
+                    },
+                  },
+                },
+              ],
+            },
+          });
+        } else {
+          const rowNum = rowIndex + 1;
+          await sheetsClient.spreadsheets.values.clear({
+            spreadsheetId,
+            range: `${SHEET_TABS.WORK_USERS}!A${rowNum}:C${rowNum}`,
+          });
+        }
+      }
+
+      // Audit Log
+      await appendRow(spreadsheetId, SHEET_TABS.AUDIT_LOG, [
+        new Date().toISOString(),
+        authUser.uid,
+        'REMOVE_USER',
+        `WorkUser/${workId}/${userId}`,
+        '',
+        JSON.stringify({ removedUserId: userId }),
+      ]);
+
+      invalidateCache();
+      return res.status(200).json({ success: true, removedUserId: userId });
+    }
+
     return res.status(405).json({ error: 'Method not allowed' });
   } catch (err: any) {
     if (err.message?.startsWith('UNAUTHORIZED')) {
