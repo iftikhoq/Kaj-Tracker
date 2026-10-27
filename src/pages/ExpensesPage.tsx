@@ -279,7 +279,7 @@ export const ExpensesPage: React.FC = () => {
 
                       <td className="p-4 text-right whitespace-nowrap">
                         <div className="flex items-center justify-end gap-2">
-                          {isPersonal && !isReimbursed && canReimburse && (
+                          {isPersonal && !isReimbursed && c.userId === currentUser?.uid && (
                             <button
                               onClick={() => handleReimburse(c)}
                               className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-xs transition-colors"

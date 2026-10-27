@@ -109,7 +109,7 @@ export const RecentExpensesTable: React.FC<RecentExpensesTableProps> = ({ costin
                     </td>
 
                     <td className="py-3 px-3 text-right">
-                      {isPersonal && !isReimbursed && canReimburse && (
+                      {isPersonal && !isReimbursed && c.userId === currentUser?.uid && (
                         <button
                           onClick={() => handleReimburse(c)}
                           className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-xs transition-colors"
