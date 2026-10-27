@@ -12,4 +12,3 @@ export interface VercelResponse extends ServerResponse {
   status: (statusCode: number) => VercelResponse;
   redirect: (statusOrUrl: string | number, url?: string) => VercelResponse;
 }
-

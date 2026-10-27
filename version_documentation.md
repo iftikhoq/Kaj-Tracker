@@ -4,6 +4,19 @@ All versions, dates, and detailed change logs for Kaj Tracker are maintained in 
 
 ---
 
+## [ver 1.0.9] - 2026-10-28
+### Status: Vercel Serverless Architecture Isolation & Diagnostics
+- **Serverless Internal Helper Isolation (`api/_lib/`):**
+  - Relocated non-endpoint helper files (`authMiddleware.ts`, `sheetsService.ts`, `types.ts`) into `api/_lib/` conforming to Vercel conventions. Prevents Vercel compiler from generating broken serverless functions for files without default request handlers.
+- **Added `/api/health` Public Diagnostics Endpoint ([`api/health.ts`](file:///e:/Projects/Kaj%20Tracker/api/health.ts)):**
+  - Built an unauthenticated health and environment diagnostic route that inspects Node runtime, checks `GOOGLE_SERVICE_ACCOUNT_JSON` presence and parse validity, and reports exact status directly in JSON.
+- **Cleaned `vercel.json` Rewrites ([`vercel.json`](file:///e:/Projects/Kaj%20Tracker/vercel.json)):**
+  - Removed circular `/api/(.*)` -> `/api/$1` rewrite rule to eliminate internal lambda routing conflicts.
+- **Controlled Error Responses on Missing Credentials ([`api/settings.ts`](file:///e:/Projects/Kaj%20Tracker/api/settings.ts)):**
+  - Returns HTTP 400 with explicit Bengali instructions instead of uncaught HTTP 500 when `GOOGLE_SERVICE_ACCOUNT_JSON` is absent.
+
+---
+
 ## [ver 1.0.8] - 2026-10-28
 ### Status: Sheet ID Header Fallback & Uninitialized Sheet Resilience
 - **Uninitialized Sheet Error Prevention ([`api/sheetsService.ts`](file:///e:/Projects/Kaj%20Tracker/api/sheetsService.ts)):**

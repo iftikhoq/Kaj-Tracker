@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { verifyAuthHeader, checkWorkPermission, AuthUserContext } from '../api/authMiddleware';
+import { verifyAuthHeader, checkWorkPermission, AuthUserContext } from '../api/_lib/authMiddleware';
 
 describe('API Auth & Work Permissions Middleware', () => {
   it('throws UNAUTHORIZED when Authorization header is missing or malformed', async () => {

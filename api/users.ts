@@ -1,17 +1,24 @@
-import type { VercelRequest, VercelResponse } from './types';
-import { verifyAuthHeader, checkWorkPermission } from './authMiddleware';
-import { batchReadAllTabs, appendRow, updateRowById, SHEET_TABS } from './sheetsService';
+import type { VercelRequest, VercelResponse } from './_lib/types';
+import { verifyAuthHeader, checkWorkPermission } from './_lib/authMiddleware';
+import {
+  batchReadAllTabs,
+  appendRow,
+  updateRowById,
+  SHEET_TABS,
+  getGoogleSheetsClient,
+  invalidateCache,
+} from './_lib/sheetsService';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const authUser = await verifyAuthHeader(req.headers.authorization);
     const spreadsheetId = (req.headers['x-sheet-id'] as string) || (req.query.sheetId as string) || process.env.SHEET_ID;
 
-    if (!spreadsheetId) {
+    if (!spreadsheetId || !process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
       if (req.method === 'GET') {
         return res.status(200).json({ users: [], workUsers: [] });
       }
-      return res.status(400).json({ error: 'Spreadsheet ID is not configured' });
+      return res.status(400).json({ error: 'Spreadsheet ID and GOOGLE_SERVICE_ACCOUNT_JSON are required.' });
     }
 
     if (req.method === 'GET') {
@@ -83,14 +90,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       // Find the row in WorkUsers tab
-      const sheetsClient = (await import('./sheetsService')).getGoogleSheetsClient();
+      const sheetsClient = getGoogleSheetsClient();
       const resData = await sheetsClient.spreadsheets.values.get({
         spreadsheetId,
         range: `${SHEET_TABS.WORK_USERS}!A:C`,
       });
 
       const rows = resData.data.values || [];
-      const rowIndex = rows.findIndex((r) => r[0] === workId && r[1] === userId);
+      const rowIndex = rows.findIndex((r: any) => r[0] === workId && r[1] === userId);
 
       if (rowIndex === -1) {
         // Not found, append
@@ -107,7 +114,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         });
       }
 
-      (await import('./sheetsService')).invalidateCache();
+      invalidateCache();
 
       return res.status(200).json({ success: true, investment: Number(investment) });
     }

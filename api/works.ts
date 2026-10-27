@@ -1,6 +1,6 @@
-import type { VercelRequest, VercelResponse } from './types';
-import { verifyAuthHeader, checkWorkPermission } from './authMiddleware';
-import { batchReadAllTabs, appendRow, updateRowById, SHEET_TABS } from './sheetsService';
+import type { VercelRequest, VercelResponse } from './_lib/types';
+import { verifyAuthHeader, checkWorkPermission } from './_lib/authMiddleware';
+import { batchReadAllTabs, appendRow, updateRowById, SHEET_TABS } from './_lib/sheetsService';
 import { Work } from '../src/types/models';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -8,11 +8,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const authUser = await verifyAuthHeader(req.headers.authorization);
     const spreadsheetId = (req.headers['x-sheet-id'] as string) || (req.query.sheetId as string) || process.env.SHEET_ID;
 
-    if (!spreadsheetId) {
+    if (!spreadsheetId || !process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
       if (req.method === 'GET') {
         return res.status(200).json({ works: [] });
       }
-      return res.status(400).json({ error: 'Spreadsheet ID is not configured. Please set it in Settings.' });
+      return res.status(400).json({ error: 'Spreadsheet ID and GOOGLE_SERVICE_ACCOUNT_JSON are required.' });
     }
 
     if (req.method === 'GET') {

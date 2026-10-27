@@ -1,6 +1,6 @@
-import type { VercelRequest, VercelResponse } from './types';
-import { verifyAuthHeader, checkWorkPermission } from './authMiddleware';
-import { batchReadAllTabs, SHEET_TABS } from './sheetsService';
+import type { VercelRequest, VercelResponse } from './_lib/types';
+import { verifyAuthHeader, checkWorkPermission } from './_lib/authMiddleware';
+import { batchReadAllTabs, SHEET_TABS } from './_lib/sheetsService';
 import { calculateDashboardStats, calculateUserExpenseSummaries, calculateCategorySummaries } from '../src/services/mathEngine';
 import { Work, Costing, WorkUser, User, Reason } from '../src/types/models';
 
@@ -14,7 +14,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const spreadsheetId = (req.headers['x-sheet-id'] as string) || (req.query.sheetId as string) || process.env.SHEET_ID;
-    if (!spreadsheetId) {
+    if (!spreadsheetId || !process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
       return res.status(200).json({
         stats: { totalBudget: 0, totalExpense: 0, totalInvestment: 0, remainingBudget: 0, isOverBudget: false },
         userSummaries: [],

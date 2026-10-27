@@ -1,6 +1,6 @@
-import type { VercelRequest, VercelResponse } from './types';
-import { verifyAuthHeader } from './authMiddleware';
-import { getGoogleSheetsClient, initializeSpreadsheetTabs, getServiceAccountEmail } from './sheetsService';
+import type { VercelRequest, VercelResponse } from './_lib/types';
+import { verifyAuthHeader } from './_lib/authMiddleware';
+import { getGoogleSheetsClient, initializeSpreadsheetTabs, getServiceAccountEmail } from './_lib/sheetsService';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
@@ -36,6 +36,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       if (!targetSheetId) {
         return res.status(400).json({ error: 'স্প্রেডশিট আইডি (Spreadsheet ID) প্রদান করা আবশ্যক।' });
+      }
+
+      if (!process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
+        return res.status(400).json({
+          error: 'Vercel-এ GOOGLE_SERVICE_ACCOUNT_JSON ভ্যারিয়েবলটি পাওয়া যায়নি। অনুগ্রহ করে Vercel Settings > Environment Variables-এ গিয়ে GOOGLE_SERVICE_ACCOUNT_JSON যোগ করুন এবং Redeploy করুন।',
+          code: 'SERVICE_ACCOUNT_MISSING',
+        });
       }
 
       if (action === 'TEST_CONNECTION') {
@@ -75,7 +82,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             });
           }
 
-          return res.status(500).json({
+          return res.status(400).json({
             error: `গুগল শিট সংযোগ ব্যর্থ: ${errMsg}`,
             serviceAccountEmail,
           });
@@ -96,7 +103,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             });
           }
 
-          return res.status(500).json({
+          return res.status(400).json({
             error: `টেবিল ইনিশিয়ালাইজেশন ব্যর্থ: ${errMsg}`,
           });
         }
