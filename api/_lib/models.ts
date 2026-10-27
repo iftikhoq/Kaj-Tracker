@@ -95,7 +95,9 @@ export interface UserExpenseSummary {
 export interface CategorySummary {
   reasonId: string;
   reasonName: string;
+  reasonNameBn?: string;
   totalCost: number;
   count: number;
   percentage: number;
 }
+

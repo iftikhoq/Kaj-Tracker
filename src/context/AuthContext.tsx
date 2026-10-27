@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User } from '../types/models';
 import { dataStore } from '../services/storage';
+import { api } from '../services/api';
 import { signInWithGoogle, signOutFirebase, isFirebaseConfigured } from '../services/firebase';
 
 interface AuthContextType {
@@ -74,16 +75,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           createdAt: new Date().toISOString(),
           avatarUrl: fbUser.photoURL || undefined,
         };
-        dataStore.saveUser(existingUser);
       } else {
         // Update role if newly matching main admin email
         if (isMainAdmin && existingUser.role !== 'main_admin') {
           existingUser.role = 'main_admin';
-          dataStore.saveUser(existingUser);
         }
       }
 
       localStorage.setItem('kaj_auth_token', token);
+      
+      // Sync user to Google Sheets and store
+      try {
+        await api.syncUser(existingUser);
+      } catch (err) {
+        console.warn('User sync to server failed, stored locally:', err);
+      }
+
       setCurrentUser(existingUser);
     } finally {
       setLoading(false);

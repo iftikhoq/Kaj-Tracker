@@ -9,6 +9,27 @@ import { CategoryPieChart } from '../components/dashboard/CategoryPieChart';
 import { PieChart, Tag, ArrowUpRight } from 'lucide-react';
 import { toast } from 'sonner';
 
+export const getCategoryDisplayName = (c: CategorySummary, lang: string): string => {
+  if (lang === 'bn' && c.reasonNameBn && c.reasonNameBn !== c.reasonId) {
+    return c.reasonNameBn;
+  }
+  if (c.reasonName && c.reasonName !== c.reasonId) {
+    return c.reasonName;
+  }
+  const fallbackMap: Record<string, { en: string; bn: string }> = {
+    r1: { en: 'Raw Cement & Brick', bn: 'সিমেন্ট ও ইট' },
+    r2: { en: 'Electrical Cables & Lights', bn: 'বৈদ্যুতিক তার ও লাইট' },
+    r3: { en: 'Sanitary & Tiles', bn: 'স্যানিটারি ও টাইলস' },
+    r4: { en: 'Carpenter & Labor Wage', bn: 'মিস্ত্রি ও শ্রমিক মজুরি' },
+    r5: { en: 'Site Transport & Fuel', bn: 'সাইট পরিবহন ও জ্বালানি' },
+    r6: { en: 'Food & Refreshment', bn: 'শ্রমিকদের খাবার ও চা-নাস্তা' },
+  };
+  if (fallbackMap[c.reasonId]) {
+    return lang === 'bn' ? fallbackMap[c.reasonId].bn : fallbackMap[c.reasonId].en;
+  }
+  return c.reasonName || c.reasonId;
+};
+
 export const CategoriesPage: React.FC = () => {
   const { t, i18n } = useTranslation();
   const lang = i18n.language.startsWith('bn') ? 'bn' : 'en';
@@ -82,7 +103,7 @@ export const CategoriesPage: React.FC = () => {
                         <td className="p-4 font-bold text-slate-900 text-sm">
                           <div className="flex items-center gap-2">
                             <Tag size={14} className="text-emerald-600" />
-                            <span>{lang === 'bn' && c.reasonNameBn ? c.reasonNameBn : c.reasonName}</span>
+                            <span>{getCategoryDisplayName(c, lang)}</span>
                           </div>
                         </td>
 

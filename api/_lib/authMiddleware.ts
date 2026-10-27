@@ -113,10 +113,10 @@ export function checkWorkPermission(
   }
 
   const isWorkAdmin = workCreatedBy === user.uid;
-  const isAssigned = isWorkAdmin || assignedUserIds.includes(user.uid);
 
+  // Every signed-in user is allowed to view the work and dashboard
   return {
-    isAllowed: isAssigned,
+    isAllowed: true,
     isWorkAdmin,
   };
 }

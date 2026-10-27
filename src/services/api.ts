@@ -18,7 +18,15 @@ import {
 
 // Determine if we should use mock/local store or serverless API
 export const isLiveBackendAvailable = (): boolean => {
-  return Boolean(import.meta.env.VITE_USE_LIVE_API === 'true');
+  if (import.meta.env.VITE_USE_LIVE_API === 'false') {
+    return false;
+  }
+  // If explicitly true, or in production mode, or hosted on web domain
+  return Boolean(
+    import.meta.env.VITE_USE_LIVE_API === 'true' ||
+    import.meta.env.PROD ||
+    (typeof window !== 'undefined' && !window.location.hostname.includes('localhost') && !window.location.hostname.includes('127.0.0.1'))
+  );
 };
 
 const getAuthToken = (): string => {
@@ -192,33 +200,143 @@ export const api = {
   },
 
   // Users & Investments
+  async getUsers(): Promise<User[]> {
+    if (!isLiveBackendAvailable()) {
+      return dataStore.getUsers();
+    }
+    try {
+      const res = await fetch('/api/users', { headers: getHeaders() });
+      if (!res.ok) return dataStore.getUsers();
+      const data = await res.json();
+      return data.users && data.users.length > 0 ? data.users : dataStore.getUsers();
+    } catch {
+      return dataStore.getUsers();
+    }
+  },
+
+  async syncUser(user: User): Promise<User> {
+    dataStore.saveUser(user);
+    if (!isLiveBackendAvailable()) {
+      return user;
+    }
+    try {
+      const res = await fetch('/api/users', {
+        method: 'POST',
+        headers: getHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ action: 'sync_user', user }),
+      });
+      if (!res.ok) {
+        console.warn('Could not sync user to server:', await res.text());
+      }
+    } catch (e) {
+      console.warn('Network error syncing user to server:', e);
+    }
+    return user;
+  },
+
   async getWorkUsers(workId: string): Promise<WorkUser[]> {
     return dataStore.getWorkUsers(workId);
   },
 
   async updateInvestment(workId: string, userId: string, investment: number): Promise<WorkUser> {
-    return dataStore.updateInvestment(workId, userId, investment);
+    dataStore.updateInvestment(workId, userId, investment);
+    if (!isLiveBackendAvailable()) {
+      return { workId, userId, investment };
+    }
+    const res = await fetch('/api/users', {
+      method: 'PATCH',
+      headers: getHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ workId, userId, investment }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Failed to update investment');
+    }
+    return { workId, userId, investment };
   },
 
   async assignUser(workId: string, userId: string, investment: number = 0): Promise<WorkUser> {
-    return dataStore.assignUserToWork(workId, userId, investment);
+    dataStore.assignUserToWork(workId, userId, investment);
+    if (!isLiveBackendAvailable()) {
+      return { workId, userId, investment };
+    }
+    const res = await fetch('/api/users', {
+      method: 'POST',
+      headers: getHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ workId, userId, investment }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Failed to assign user');
+    }
+    return { workId, userId, investment };
   },
 
   // Shared Categories & Metrics
   async getReasons(): Promise<Reason[]> {
-    return dataStore.getReasons();
+    if (!isLiveBackendAvailable()) {
+      return dataStore.getReasons();
+    }
+    try {
+      const res = await fetch('/api/categories', { headers: getHeaders() });
+      if (!res.ok) return dataStore.getReasons();
+      const data = await res.json();
+      return data.reasons && data.reasons.length > 0 ? data.reasons : dataStore.getReasons();
+    } catch {
+      return dataStore.getReasons();
+    }
   },
 
   async addReason(name: string, name_bn?: string, createdBy?: string): Promise<Reason> {
-    return dataStore.addReason(name, name_bn, createdBy);
+    const localReason = dataStore.addReason(name, name_bn, createdBy);
+    if (!isLiveBackendAvailable()) {
+      return localReason;
+    }
+    try {
+      const res = await fetch('/api/categories', {
+        method: 'POST',
+        headers: getHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ type: 'reason', name, name_bn }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return data.item;
+      }
+    } catch {}
+    return localReason;
   },
 
   async getMetrics(): Promise<Metric[]> {
-    return dataStore.getMetrics();
+    if (!isLiveBackendAvailable()) {
+      return dataStore.getMetrics();
+    }
+    try {
+      const res = await fetch('/api/categories', { headers: getHeaders() });
+      if (!res.ok) return dataStore.getMetrics();
+      const data = await res.json();
+      return data.metrics && data.metrics.length > 0 ? data.metrics : dataStore.getMetrics();
+    } catch {
+      return dataStore.getMetrics();
+    }
   },
 
   async addMetric(name: string, name_bn?: string, createdBy?: string): Promise<Metric> {
-    return dataStore.addMetric(name, name_bn, createdBy);
+    const localMetric = dataStore.addMetric(name, name_bn, createdBy);
+    if (!isLiveBackendAvailable()) {
+      return localMetric;
+    }
+    try {
+      const res = await fetch('/api/categories', {
+        method: 'POST',
+        headers: getHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ type: 'metric', name, name_bn }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return data.item;
+      }
+    } catch {}
+    return localMetric;
   },
 
   // Settings

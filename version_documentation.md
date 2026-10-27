@@ -4,6 +4,35 @@ All versions, dates, and detailed change logs for Kaj Tracker are maintained in 
 
 ---
 
+## [ver 1.1.0] - 2026-10-28
+### Status: Real Category Name Display, Live Investment Editing, User Sync & Role Visibility Permissions
+- **Category Name Display Resolution (Fixing `r1`, `r2`, `r3` display):**
+  - Resolved missing category names in category breakdown tables, pie charts, and expense lists:
+    - Added comprehensive fallback dictionaries (`DEFAULT_REASONS`) mapping standard IDs (`r1` -> 'সিমেন্ট ও ইট' / 'Raw Cement & Brick', `r2` -> 'বৈদ্যুতিক তার ও লাইট', `r3` -> 'Sanitary & Tiles', etc.) in both `api/_lib/mathEngine.ts` and `src/services/mathEngine.ts`.
+    - Added `reasonNameBn` to `CategorySummary` and enriched `c.reasonName` and `c.userName` in `/api/costings` and `/api/dashboard` serverless handlers.
+    - Updated `initializeSpreadsheetTabs` in `api/_lib/sheetsService.ts` to pre-seed default categories and metrics directly into the Google Sheet if tabs are newly created.
+    - Implemented UI fallback helpers `getCategoryDisplayName` and `formatReason` in [`CategoriesPage.tsx`](file:///e:/Projects/Kaj%20Tracker/src/pages/CategoriesPage.tsx), [`CategoryPieChart.tsx`](file:///e:/Projects/Kaj%20Tracker/src/components/dashboard/CategoryPieChart.tsx), [`RecentExpensesTable.tsx`](file:///e:/Projects/Kaj%20Tracker/src/components/dashboard/RecentExpensesTable.tsx), and [`ExpensesPage.tsx`](file:///e:/Projects/Kaj%20Tracker/src/pages/ExpensesPage.tsx).
+- **Removed Demo Mode from Login Screen:**
+  - Removed sandbox/demo accounts and divider from [`LoginPage.tsx`](file:///e:/Projects/Kaj%20Tracker/src/pages/LoginPage.tsx), presenting a pure, professional Google Sign-In interface.
+- **Fixed Member Investment Editing (বিনিয়োগ পরিবর্তন):**
+  - Wired [`UsersPage.tsx`](file:///e:/Projects/Kaj%20Tracker/src/pages/UsersPage.tsx) to make live serverless requests to `/api/users`:
+    - Updated `api.updateInvestment` to issue `PATCH /api/users` with `{ workId, userId, investment }`, updating the `WorkUsers` tab in Google Sheets and clearing cache.
+    - Updated `api.assignUser` to issue `POST /api/users` to add or update member allocations with live feedback.
+    - Added error message toasts displaying exact server messages on failure.
+- **Google Sign-In User Synchronization & Work Member Discovery:**
+  - Added user auto-registration in [`api/users.ts`](file:///e:/Projects/Kaj%20Tracker/api/users.ts) (`action: 'sync_user'`):
+    - Appends newly signed-in Google users directly into the Google Sheet's `Users` tab if they do not yet exist, and updates their profile metadata if changed.
+    - Updated [`AuthContext.tsx`](file:///e:/Projects/Kaj%20Tracker/src/context/AuthContext.tsx) to invoke `api.syncUser` upon successful Firebase Google Sign-In.
+    - Updated `UsersPage.tsx` to load all system users from `/api/users` so every signed-in user across devices is immediately selectable in the "Assign Member" modal.
+- **Universal Dashboard View Access & Spreadsheet Settings Protection:**
+  - Removed waiting screen redirect from [`routes.tsx`](file:///e:/Projects/Kaj%20Tracker/src/routes.tsx) and updated [`api/works.ts`](file:///e:/Projects/Kaj%20Tracker/api/works.ts) `GET` to return all works to every authenticated user.
+  - Allowed all signed-in users to view the dashboard, expenses, members, reports, and categories, as well as create new works via "নতুন কাজ তৈরি করুন" (making the creator the Work Admin).
+  - Strictly protected spreadsheet settings: hidden in [`Sidebar.tsx`](file:///e:/Projects/Kaj%20Tracker/src/components/layout/Sidebar.tsx) for non-admins, guarded by `ProtectedRoute requireAdmin` in [`routes.tsx`](file:///e:/Projects/Kaj%20Tracker/src/routes.tsx), blocked with access-restricted banner in [`SettingsPage.tsx`](file:///e:/Projects/Kaj%20Tracker/src/pages/SettingsPage.tsx), and enforced with HTTP 403 in [`api/settings.ts`](file:///e:/Projects/Kaj%20Tracker/api/settings.ts).
+- **Automatic Live API Mode Detection:**
+  - Updated `isLiveBackendAvailable` in [`src/services/api.ts`](file:///e:/Projects/Kaj%20Tracker/src/services/api.ts) to automatically enable live serverless API calls whenever running in production (`import.meta.env.PROD` or hosted domain), preventing accidental local storage fallbacks in Vercel.
+
+---
+
 ## [ver 1.0.10] - 2026-10-28
 ### Status: Node ESM Strict Relative Import Extension Resolution (`.js`) & Serverless Decoupling
 - **Strict Node ESM Import Extensions (`.js`):**

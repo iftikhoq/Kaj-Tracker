@@ -24,11 +24,6 @@ const ProtectedRoute: React.FC<{ children: React.ReactElement; requireAdmin?: bo
     return <Navigate to="/login" replace />;
   }
 
-  // If user has no access to any work and is not a main admin, show holding screen
-  if (!loading && !hasAccessToAnyWork && !isMainAdmin) {
-    return <Navigate to="/waiting-assignment" replace />;
-  }
-
   if (requireAdmin && !isMainAdmin) {
     return <Navigate to="/" replace />;
   }

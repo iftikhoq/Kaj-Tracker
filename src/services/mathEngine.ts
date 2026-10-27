@@ -97,6 +97,15 @@ export function calculateUserExpenseSummaries(
 /**
  * Calculates expense breakdown by Reason/Category
  */
+export const DEFAULT_REASONS: Reason[] = [
+  { id: 'r1', name: 'Raw Cement & Brick', name_bn: 'সিমেন্ট ও ইট', createdBy: 'system' },
+  { id: 'r2', name: 'Electrical Cables & Lights', name_bn: 'বৈদ্যুতিক তার ও লাইট', createdBy: 'system' },
+  { id: 'r3', name: 'Sanitary & Tiles', name_bn: 'স্যানিটারি ও টাইলস', createdBy: 'system' },
+  { id: 'r4', name: 'Carpenter & Labor Wage', name_bn: 'মিস্ত্রি ও শ্রমিক মজুরি', createdBy: 'system' },
+  { id: 'r5', name: 'Site Transport & Fuel', name_bn: 'সাইট পরিবহন ও জ্বালানি', createdBy: 'system' },
+  { id: 'r6', name: 'Food & Refreshment', name_bn: 'শ্রমিকদের খাবার ও চা-নাস্তা', createdBy: 'system' },
+];
+
 export function calculateCategorySummaries(
   workId: string,
   costings: Costing[],
@@ -120,13 +129,41 @@ export function calculateCategorySummaries(
   const results: CategorySummary[] = [];
 
   for (const [reasonId, data] of reasonMap.entries()) {
-    const reason = reasons.find((r) => r.id === reasonId);
+    const reason = reasons.find((r) => r.id === reasonId) || DEFAULT_REASONS.find((r) => r.id === reasonId);
     const percentage = grandTotal > 0 ? (data.total / grandTotal) * 100 : 0;
+
+    let reasonName = reason?.name;
+    let reasonNameBn = reason?.name_bn;
+
+    if (!reasonName && !reasonNameBn) {
+      if (reasonId === 'r1') {
+        reasonName = 'Raw Cement & Brick';
+        reasonNameBn = 'সিমেন্ট ও ইট';
+      } else if (reasonId === 'r2') {
+        reasonName = 'Electrical Cables & Lights';
+        reasonNameBn = 'বৈদ্যুতিক তার ও লাইট';
+      } else if (reasonId === 'r3') {
+        reasonName = 'Sanitary & Tiles';
+        reasonNameBn = 'স্যানিটারি ও টাইলস';
+      } else if (reasonId === 'r4') {
+        reasonName = 'Carpenter & Labor Wage';
+        reasonNameBn = 'মিস্ত্রি ও শ্রমিক মজুরি';
+      } else if (reasonId === 'r5') {
+        reasonName = 'Site Transport & Fuel';
+        reasonNameBn = 'সাইট পরিবহন ও জ্বালানি';
+      } else if (reasonId === 'r6') {
+        reasonName = 'Food & Refreshment';
+        reasonNameBn = 'শ্রমিকদের খাবার ও চা-নাস্তা';
+      } else {
+        reasonName = reasonId;
+        reasonNameBn = reasonId;
+      }
+    }
 
     results.push({
       reasonId,
-      reasonName: reason ? reason.name : reasonId,
-      reasonNameBn: reason?.name_bn,
+      reasonName: reasonName || reasonNameBn || reasonId,
+      reasonNameBn: reasonNameBn || reasonName || reasonId,
       totalCost: data.total,
       count: data.count,
       percentage: Math.round(percentage * 10) / 10,

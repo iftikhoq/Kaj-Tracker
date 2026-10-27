@@ -32,20 +32,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         isCompleted: r[8] === 'TRUE' || r[8] === 'true',
       }));
 
-      if (authUser.isMainAdmin) {
-        return res.status(200).json({ works: allWorks });
-      }
-
-      // Filter for works assigned to or created by this user
-      const assignedWorkIds = new Set(
-        workUserRows.filter((r) => r[1] === authUser.uid).map((r) => r[0])
-      );
-
-      const accessibleWorks = allWorks.filter(
-        (w) => w.createdBy === authUser.uid || assignedWorkIds.has(w.workId)
-      );
-
-      return res.status(200).json({ works: accessibleWorks });
+      // Return all works so every signed-in user can view dashboard and project details
+      return res.status(200).json({ works: allWorks });
     }
 
     if (req.method === 'POST') {

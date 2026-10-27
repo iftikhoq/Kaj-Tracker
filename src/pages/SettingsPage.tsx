@@ -49,6 +49,18 @@ export const SettingsPage: React.FC = () => {
   const [newMetricNameBn, setNewMetricNameBn] = useState('');
   const [activeTab, setActiveTab] = useState<'reasons' | 'metrics'>('reasons');
 
+  if (!isMainAdmin) {
+    return (
+      <div className="card-depth p-8 text-center max-w-lg mx-auto my-12">
+        <AlertCircle size={40} className="text-amber-500 mx-auto mb-3" />
+        <h2 className="text-lg font-bold text-slate-800">অ্যাক্সেস সংরক্ষিত / Access Restricted</h2>
+        <p className="text-xs text-slate-500 mt-1">
+          শুধুমাত্র প্রধান অ্যাডমিন সিস্টেম এবং স্প্রেডশিট সেটিংস পরিচালনা করতে পারেন।
+        </p>
+      </div>
+    );
+  }
+
   useEffect(() => {
     loadSettings();
     loadSharedLists();

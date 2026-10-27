@@ -1,8 +1,17 @@
 import type { VercelRequest, VercelResponse } from './_lib/types.js';
 import { verifyAuthHeader, checkWorkPermission } from './_lib/authMiddleware.js';
 import { batchReadAllTabs, appendRow, updateRowById, SHEET_TABS } from './_lib/sheetsService.js';
-import { reimburseCosting } from './_lib/mathEngine.js';
+import { reimburseCosting, DEFAULT_REASONS } from './_lib/mathEngine.js';
 import type { Costing } from './_lib/models.js';
+
+const DEFAULT_METRIC_MAP: Record<string, string> = {
+  m1: 'ব্যাগ / Bags',
+  m2: 'পিস / Nos',
+  m3: 'বর্গফুট / sqft',
+  m4: 'টন / Tons',
+  m5: 'দিন / Days',
+  m6: 'লিটার / Liters',
+};
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
@@ -34,6 +43,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       const costingRows = (allTabs[SHEET_TABS.COSTINGS] || []).filter((r) => r[1] === workId);
+      const userRows = allTabs[SHEET_TABS.USERS] || [];
+      const reasonRows = allTabs[SHEET_TABS.REASONS] || [];
+      const metricRows = allTabs[SHEET_TABS.METRICS] || [];
+
+      const userMap = new Map<string, string>(userRows.map((r) => [r[0], r[2] || r[1] || r[3]]));
+      const reasonMap = new Map<string, string>();
+      DEFAULT_REASONS.forEach((r) => reasonMap.set(r.id, r.name_bn || r.name));
+      reasonRows.forEach((r) => reasonMap.set(r[0], r[2] || r[1]));
+
+      const metricMap = new Map<string, string>();
+      Object.entries(DEFAULT_METRIC_MAP).forEach(([k, v]) => metricMap.set(k, v));
+      metricRows.forEach((r) => metricMap.set(r[0], r[2] || r[1]));
+
       const costings: Costing[] = costingRows.map((r) => ({
         costingId: r[0],
         workId: r[1],
@@ -47,6 +69,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         reimbursedBy: r[9] || null,
         note: r[10],
         createdAt: r[11],
+        userName: userMap.get(r[2]) || r[2],
+        reasonName: reasonMap.get(r[3]) || r[3],
+        metricName: r[5] ? metricMap.get(r[5]) || r[5] : undefined,
       }));
 
       return res.status(200).json({ costings });

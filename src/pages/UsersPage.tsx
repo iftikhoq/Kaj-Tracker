@@ -42,9 +42,12 @@ export const UsersPage: React.FC = () => {
     if (!activeWork || !currentUser) return;
     try {
       setLoading(true);
-      const dash = await api.getDashboardData(activeWork.workId, currentUser);
+      const [dash, allUsers] = await Promise.all([
+        api.getDashboardData(activeWork.workId, currentUser),
+        api.getUsers(),
+      ]);
       setSummaries(dash.userSummaries || []);
-      setAllSystemUsers(dataStore.getUsers());
+      setAllSystemUsers(allUsers || []);
     } catch (err: any) {
       toast.error(err.message || t('common.error'));
     } finally {
@@ -79,8 +82,8 @@ export const UsersPage: React.FC = () => {
       toast.success(t('common.success'));
       setEditingUserId(null);
       loadData();
-    } catch {
-      toast.error(t('common.error'));
+    } catch (err: any) {
+      toast.error(err.message || t('common.error'));
     }
   };
 
@@ -95,8 +98,8 @@ export const UsersPage: React.FC = () => {
       setSelectedUserId('');
       setInitialInvestment('0');
       loadData();
-    } catch {
-      toast.error(t('common.error'));
+    } catch (err: any) {
+      toast.error(err.message || t('common.error'));
     }
   };
 

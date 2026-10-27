@@ -85,17 +85,7 @@ export const dataStore = {
   getWorks(user?: User | null): Work[] {
     const works = getStored<Work[]>(STORAGE_KEYS.WORKS, INITIAL_WORKS);
     if (!user) return [];
-    if (user.role === 'main_admin') {
-      return works;
-    }
-
-    const workUsers = this.getWorkUsers();
-    const assignedWorkIds = new Set(
-      workUsers.filter((wu) => wu.userId === user.uid).map((wu) => wu.workId)
-    );
-
-    // Can see works created by them OR assigned to them
-    return works.filter((w) => w.createdBy === user.uid || assignedWorkIds.has(w.workId));
+    return works;
   },
 
   getWorkById(workId: string): Work | undefined {

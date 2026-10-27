@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from './_lib/types.js';
 import { verifyAuthHeader, checkWorkPermission } from './_lib/authMiddleware.js';
 import { batchReadAllTabs, SHEET_TABS } from './_lib/sheetsService.js';
-import { calculateDashboardStats, calculateUserExpenseSummaries, calculateCategorySummaries } from './_lib/mathEngine.js';
+import { calculateDashboardStats, calculateUserExpenseSummaries, calculateCategorySummaries, DEFAULT_REASONS } from './_lib/mathEngine.js';
 import type { Work, Costing, WorkUser, User, Reason } from './_lib/models.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -100,6 +100,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       name_bn: r[2],
       createdBy: r[3],
     }));
+
+    // User & Reason Map for display
+    const userMap = new Map<string, string>(users.map((u) => [u.uid, u.name_bn || u.name]));
+    const reasonMap = new Map<string, string>();
+    DEFAULT_REASONS.forEach((r) => reasonMap.set(r.id, r.name_bn || r.name));
+    reasons.forEach((r) => reasonMap.set(r.id, r.name_bn || r.name));
+
+    // Enrich costings with display names
+    costings.forEach((c) => {
+      c.userName = userMap.get(c.userId) || c.userId;
+      c.reasonName = reasonMap.get(c.reasonId) || c.reasonId;
+    });
 
     // Perform financial calculations
     const stats = calculateDashboardStats(work, costings, assignedWorkUsers);

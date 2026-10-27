@@ -37,25 +37,95 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     if (req.method === 'POST') {
-      const { workId, userId, investment } = req.body;
+      const body = req.body || {};
+      const { action, user, workId, userId, investment } = body;
+
+      // 1. Sync / Register newly signed-in user into Google Sheets 'Users' tab
+      if (action === 'sync_user' || user) {
+        const targetUser = user || body;
+        if (!targetUser.uid || !targetUser.email) {
+          return res.status(400).json({ error: 'uid and email are required to sync user' });
+        }
+
+        const allTabs = await batchReadAllTabs(spreadsheetId, true);
+        const userRows = allTabs[SHEET_TABS.USERS] || [];
+        const existingIndex = userRows.findIndex(
+          (r) => r[0] === targetUser.uid || r[3]?.toLowerCase() === targetUser.email?.toLowerCase()
+        );
+
+        const sheetsClient = getGoogleSheetsClient();
+        const mainAdminEmail = (process.env.MAIN_ADMIN_EMAIL || 'ifti.k.hoq@gmail.com').toLowerCase().trim();
+        const role = targetUser.email.toLowerCase().trim() === mainAdminEmail ? 'main_admin' : (targetUser.role || 'user');
+
+        if (existingIndex === -1) {
+          // New user, append to Users tab
+          const newRow = [
+            targetUser.uid,
+            targetUser.name || targetUser.email.split('@')[0],
+            targetUser.name_bn || targetUser.name || '',
+            targetUser.email,
+            role,
+            targetUser.createdAt || new Date().toISOString(),
+          ];
+          await appendRow(spreadsheetId, SHEET_TABS.USERS, newRow);
+        } else {
+          // Update existing user row if name/role changed
+          const rowNum = existingIndex + 2;
+          await sheetsClient.spreadsheets.values.update({
+            spreadsheetId,
+            range: `${SHEET_TABS.USERS}!A${rowNum}:F${rowNum}`,
+            valueInputOption: 'USER_ENTERED',
+            requestBody: {
+              values: [[
+                targetUser.uid,
+                targetUser.name || userRows[existingIndex][1],
+                targetUser.name_bn || userRows[existingIndex][2] || '',
+                targetUser.email,
+                role,
+                userRows[existingIndex][5] || new Date().toISOString(),
+              ]],
+            },
+          });
+        }
+
+        invalidateCache();
+        return res.status(200).json({ success: true, user: { ...targetUser, role } });
+      }
+
+      // 2. Assign User to Work with initial investment
       if (!workId || !userId) {
         return res.status(400).json({ error: 'workId and userId are required' });
       }
 
-      const allTabs = await batchReadAllTabs(spreadsheetId);
+      const allTabs = await batchReadAllTabs(spreadsheetId, true);
       const work = (allTabs[SHEET_TABS.WORKS] || []).find((r) => r[0] === workId);
       if (!work) return res.status(404).json({ error: 'Work not found' });
 
-      // Only Work Admin or Main Admin can assign members
-      const workUsers = (allTabs[SHEET_TABS.WORK_USERS] || []).filter((r) => r[0] === workId);
-      const perm = checkWorkPermission(authUser, workId, work[7], workUsers.map((r) => r[1]));
+      // Check if user is already assigned in WorkUsers tab
+      const sheetsClient = getGoogleSheetsClient();
+      const resData = await sheetsClient.spreadsheets.values.get({
+        spreadsheetId,
+        range: `${SHEET_TABS.WORK_USERS}!A:C`,
+      });
 
-      if (!perm.isWorkAdmin && !authUser.isMainAdmin) {
-        return res.status(403).json({ error: 'Only Work Admin or Main Admin can assign members' });
+      const rows = resData.data.values || [];
+      const rowIndex = rows.findIndex((r: any) => r[0] === workId && r[1] === userId);
+
+      if (rowIndex !== -1) {
+        // Already assigned, update investment
+        const rowNum = rowIndex + 1;
+        await sheetsClient.spreadsheets.values.update({
+          spreadsheetId,
+          range: `${SHEET_TABS.WORK_USERS}!A${rowNum}:C${rowNum}`,
+          valueInputOption: 'USER_ENTERED',
+          requestBody: {
+            values: [[workId, userId, String(investment || 0)]],
+          },
+        });
+      } else {
+        // Not assigned, append new assignment
+        await appendRow(spreadsheetId, SHEET_TABS.WORK_USERS, [workId, userId, String(investment || 0)]);
       }
-
-      const newRow = [workId, userId, String(investment || 0)];
-      await appendRow(spreadsheetId, SHEET_TABS.WORK_USERS, newRow);
 
       // Audit Log
       await appendRow(spreadsheetId, SHEET_TABS.AUDIT_LOG, [
@@ -64,9 +134,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         'ASSIGN_USER',
         `WorkUser/${workId}/${userId}`,
         '',
-        JSON.stringify({ investment }),
+        JSON.stringify({ investment: Number(investment) || 0 }),
       ]);
 
+      invalidateCache();
       return res.status(201).json({ success: true, workUser: { workId, userId, investment: Number(investment) || 0 } });
     }
 
@@ -76,16 +147,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(400).json({ error: 'workId, userId, and investment are required' });
       }
 
-      // Check permission: user can edit their own investment, or admin can edit anyone's
-      const allTabs = await batchReadAllTabs(spreadsheetId);
+      const allTabs = await batchReadAllTabs(spreadsheetId, true);
       const work = (allTabs[SHEET_TABS.WORKS] || []).find((r) => r[0] === workId);
       if (!work) return res.status(404).json({ error: 'Work not found' });
 
-      const workUsers = (allTabs[SHEET_TABS.WORK_USERS] || []).filter((r) => r[0] === workId);
-      const perm = checkWorkPermission(authUser, workId, work[7], workUsers.map((r) => r[1]));
-
       const isSelf = authUser.uid === userId;
-      if (!isSelf && !perm.isWorkAdmin && !authUser.isMainAdmin) {
+      const isWorkAdmin = work[7] === authUser.uid;
+
+      if (!isSelf && !isWorkAdmin && !authUser.isMainAdmin) {
         return res.status(403).json({ error: 'Permission denied: Cannot edit another user investment' });
       }
 
@@ -100,7 +169,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const rowIndex = rows.findIndex((r: any) => r[0] === workId && r[1] === userId);
 
       if (rowIndex === -1) {
-        // Not found, append
+        // If not found in WorkUsers, append new assignment with investment
         await appendRow(spreadsheetId, SHEET_TABS.WORK_USERS, [workId, userId, String(investment)]);
       } else {
         const rowNum = rowIndex + 1;
@@ -114,8 +183,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         });
       }
 
-      invalidateCache();
+      // Audit Log
+      await appendRow(spreadsheetId, SHEET_TABS.AUDIT_LOG, [
+        new Date().toISOString(),
+        authUser.uid,
+        'UPDATE_INVESTMENT',
+        `WorkUser/${workId}/${userId}`,
+        '',
+        JSON.stringify({ investment: Number(investment) }),
+      ]);
 
+      invalidateCache();
       return res.status(200).json({ success: true, investment: Number(investment) });
     }
 
@@ -127,4 +205,3 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: err.message || 'Internal server error' });
   }
 }
-

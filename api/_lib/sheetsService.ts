@@ -192,6 +192,31 @@ export async function initializeSpreadsheetTabs(spreadsheetId: string) {
     values: [headers],
   }));
 
+  // Pre-seed default reasons and metrics so categories never show raw IDs
+  data.push({
+    range: `${SHEET_TABS.REASONS}!A2:D7`,
+    values: [
+      ['r1', 'Raw Cement & Brick', 'সিমেন্ট ও ইট', 'system'],
+      ['r2', 'Electrical Cables & Lights', 'বৈদ্যুতিক তার ও লাইট', 'system'],
+      ['r3', 'Sanitary & Tiles', 'স্যানিটারি ও টাইলস', 'system'],
+      ['r4', 'Carpenter & Labor Wage', 'মিস্ত্রি ও শ্রমিক মজুরি', 'system'],
+      ['r5', 'Site Transport & Fuel', 'সাইট পরিবহন ও জ্বালানি', 'system'],
+      ['r6', 'Food & Refreshment', 'শ্রমিকদের খাবার ও চা-নাস্তা', 'system'],
+    ],
+  });
+
+  data.push({
+    range: `${SHEET_TABS.METRICS}!A2:D7`,
+    values: [
+      ['m1', 'Bags', 'ব্যাগ', 'system'],
+      ['m2', 'Pieces / Nos', 'পিস / সংখ্যা', 'system'],
+      ['m3', 'Square Feet (sqft)', 'বর্গফুট (স্কয়ার ফিট)', 'system'],
+      ['m4', 'Tons', 'টন', 'system'],
+      ['m5', 'Days', 'দিন', 'system'],
+      ['m6', 'Liters', 'লিটার', 'system'],
+    ],
+  });
+
   await sheets.spreadsheets.values.batchUpdate({
     spreadsheetId,
     requestBody: {

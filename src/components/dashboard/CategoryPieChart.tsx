@@ -20,6 +20,27 @@ const COLORS = [
   '#F97316', // Orange
 ];
 
+const getCategoryDisplayName = (c: CategorySummary, lang: string): string => {
+  if (lang === 'bn' && c.reasonNameBn && c.reasonNameBn !== c.reasonId) {
+    return c.reasonNameBn;
+  }
+  if (c.reasonName && c.reasonName !== c.reasonId) {
+    return c.reasonName;
+  }
+  const fallbackMap: Record<string, { en: string; bn: string }> = {
+    r1: { en: 'Raw Cement & Brick', bn: 'সিমেন্ট ও ইট' },
+    r2: { en: 'Electrical Cables & Lights', bn: 'বৈদ্যুতিক তার ও লাইট' },
+    r3: { en: 'Sanitary & Tiles', bn: 'স্যানিটারি ও টাইলস' },
+    r4: { en: 'Carpenter & Labor Wage', bn: 'মিস্ত্রি ও শ্রমিক মজুরি' },
+    r5: { en: 'Site Transport & Fuel', bn: 'সাইট পরিবহন ও জ্বালানি' },
+    r6: { en: 'Food & Refreshment', bn: 'শ্রমিকদের খাবার ও চা-নাস্তা' },
+  };
+  if (fallbackMap[c.reasonId]) {
+    return lang === 'bn' ? fallbackMap[c.reasonId].bn : fallbackMap[c.reasonId].en;
+  }
+  return c.reasonName || c.reasonId;
+};
+
 export const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories }) => {
   const { t, i18n } = useTranslation();
   const lang = i18n.language.startsWith('bn') ? 'bn' : 'en';
@@ -34,7 +55,7 @@ export const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories }
   }
 
   const chartData = categories.slice(0, 6).map((c) => ({
-    name: lang === 'bn' && c.reasonNameBn ? c.reasonNameBn : c.reasonName,
+    name: getCategoryDisplayName(c, lang),
     value: c.totalCost,
     percentage: c.percentage,
   }));

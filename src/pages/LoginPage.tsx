@@ -3,12 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { LanguageToggle } from '../components/layout/LanguageToggle';
-import { ShieldCheck, UserCheck, Sparkles, AlertCircle } from 'lucide-react';
+import { Sparkles, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const LoginPage: React.FC = () => {
   const { t } = useTranslation();
-  const { loginWithGoogle, loginAsDemo, isFirebaseAvailable } = useAuth();
+  const { loginWithGoogle, isFirebaseAvailable } = useAuth();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -20,7 +20,7 @@ export const LoginPage: React.FC = () => {
       navigate('/');
     } catch (err: any) {
       if (err.message === 'FIREBASE_NOT_CONFIGURED') {
-        toast.info('ফায়ারবেস ক্লায়েন্ট কি কনফিগার করা নেই। অনুগ্রহ করে ডেমো মোডে প্রবেশ করুন।');
+        toast.error('ফায়ারবেস ক্লায়েন্ট কি কনফিগার করা নেই। অনুগ্রহ করে এনভায়রনমেন্ট ভ্যারিয়েবল চেক করুন।');
       } else {
         toast.error(err.message || t('common.error'));
       }
@@ -29,43 +29,45 @@ export const LoginPage: React.FC = () => {
     }
   };
 
-  const handleDemoLogin = (role: 'main_admin' | 'user') => {
-    loginAsDemo(role);
-    toast.success(`${role === 'main_admin' ? 'প্রধান অ্যাডমিন' : 'সদস্য'} হিসেবে প্রবেশ করা হয়েছে`);
-    navigate('/');
-  };
-
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 relative overflow-hidden select-none">
-      {/* Background Glows */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-teal-600/10 rounded-full blur-3xl pointer-events-none" />
+      {/* Decorative gradient glow */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-emerald-600/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Language Toggle in Top Right */}
-      <div className="absolute top-6 right-6">
+      {/* Language switcher top right */}
+      <div className="absolute top-4 right-4 z-10">
         <LanguageToggle />
       </div>
 
-      {/* Main Login Card */}
-      <div className="relative z-10 w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-depth-lg text-center modal-enter">
+      <div className="card-depth w-full max-w-md bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-2xl relative z-10 text-center">
         {/* Brand Icon */}
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-400 mx-auto flex items-center justify-center text-white font-black text-2xl shadow-xl shadow-emerald-950 mb-5">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-400 text-white font-black text-3xl shadow-lg shadow-emerald-950/80 mb-4">
           ক
         </div>
 
-        <h1 className="text-2xl font-bold text-white tracking-tight">
-          {t('auth.signInTitle')}
-        </h1>
-        <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
-          {t('auth.signInSubtitle')}
-        </p>
+        <h1 className="text-2xl font-black text-white tracking-tight">{t('app.title')}</h1>
+        <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto">{t('app.subtitle')}</p>
 
-        {/* Google Sign-in Button */}
+        {/* Firebase Config Notice if missing */}
+        {!isFirebaseAvailable && (
+          <div className="my-4 p-3 rounded-xl bg-amber-950/40 border border-amber-800/60 text-amber-300 text-xs text-left flex items-start gap-2">
+            <AlertCircle size={16} className="shrink-0 mt-0.5 text-amber-400" />
+            <div>
+              <p className="font-bold">ফায়ারবেস কনফিগারেশন প্রয়োজন</p>
+              <p className="text-[11px] text-amber-200/80 mt-0.5">
+                গুগল সাইন-ইন চালু করতে Vercel বা .env-এ Firebase Web Client কী কনফিগার করুন।
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Google Login Form */}
         <div className="mt-8 space-y-4">
           <button
             onClick={handleGoogleLogin}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs shadow-md transition-all active:scale-95 disabled:opacity-60"
+            className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-bold text-sm shadow-lg shadow-emerald-950/30 transition-all active:scale-[0.98] disabled:opacity-60"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path
@@ -85,35 +87,8 @@ export const LoginPage: React.FC = () => {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
               />
             </svg>
-            <span>{t('auth.googleButton')}</span>
+            <span>{loading ? 'লগইন হচ্ছে...' : t('auth.googleButton')}</span>
           </button>
-
-          {/* Divider */}
-          <div className="relative py-2 flex items-center justify-center">
-            <div className="border-t border-slate-800 w-full" />
-            <span className="bg-slate-900 px-3 text-xs text-slate-400 uppercase tracking-wider font-semibold">
-              {t('auth.demoMode')}
-            </span>
-          </div>
-
-          {/* Demo Login Buttons */}
-          <div className="grid grid-cols-2 gap-2.5">
-            <button
-              onClick={() => handleDemoLogin('main_admin')}
-              className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700/80 text-emerald-400 border border-slate-700 font-semibold text-sm transition-colors"
-            >
-              <ShieldCheck size={16} />
-              <span>{t('auth.demoAdmin')}</span>
-            </button>
-
-            <button
-              onClick={() => handleDemoLogin('user')}
-              className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700 font-semibold text-sm transition-colors"
-            >
-              <UserCheck size={16} />
-              <span>{t('auth.demoUser')}</span>
-            </button>
-          </div>
         </div>
 
         {/* Footnote */}
@@ -124,4 +99,3 @@ export const LoginPage: React.FC = () => {
     </div>
   );
 };
-

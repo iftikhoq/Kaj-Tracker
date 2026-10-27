@@ -1,6 +1,17 @@
 import type { VercelRequest, VercelResponse } from './_lib/types.js';
 import { verifyAuthHeader } from './_lib/authMiddleware.js';
 import { batchReadAllTabs, appendRow, SHEET_TABS } from './_lib/sheetsService.js';
+import { DEFAULT_REASONS } from './_lib/mathEngine.js';
+import type { Reason, Metric } from './_lib/models.js';
+
+const DEFAULT_METRICS = [
+  { id: 'm1', name: 'Bags', name_bn: 'ব্যাগ', createdBy: 'system' },
+  { id: 'm2', name: 'Pieces / Nos', name_bn: 'পিস / সংখ্যা', createdBy: 'system' },
+  { id: 'm3', name: 'Square Feet (sqft)', name_bn: 'বর্গফুট (স্কয়ার ফিট)', createdBy: 'system' },
+  { id: 'm4', name: 'Tons', name_bn: 'টন', createdBy: 'system' },
+  { id: 'm5', name: 'Days', name_bn: 'দিন', createdBy: 'system' },
+  { id: 'm6', name: 'Liters', name_bn: 'লিটার', createdBy: 'system' },
+];
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
@@ -19,19 +30,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const reasonRows = allTabs[SHEET_TABS.REASONS] || [];
       const metricRows = allTabs[SHEET_TABS.METRICS] || [];
 
-      const reasons = reasonRows.map((r) => ({
+      let reasons: Reason[] = reasonRows.map((r) => ({
         id: r[0],
         name: r[1],
         name_bn: r[2],
         createdBy: r[3],
       }));
 
-      const metrics = metricRows.map((r) => ({
+      let metrics: Metric[] = metricRows.map((r) => ({
         id: r[0],
         name: r[1],
         name_bn: r[2],
         createdBy: r[3],
       }));
+
+      // If spreadsheet has no custom categories yet, provide default categories
+      if (reasons.length === 0) {
+        reasons = DEFAULT_REASONS;
+      }
+      if (metrics.length === 0) {
+        metrics = DEFAULT_METRICS;
+      }
 
       return res.status(200).json({ reasons, metrics });
     }

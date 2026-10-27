@@ -14,6 +14,26 @@ interface RecentExpensesTableProps {
   onRefresh: () => void;
 }
 
+const FALLBACK_REASONS: Record<string, { en: string; bn: string }> = {
+  r1: { en: 'Raw Cement & Brick', bn: 'সিমেন্ট ও ইট' },
+  r2: { en: 'Electrical Cables & Lights', bn: 'বৈদ্যুতিক তার ও লাইট' },
+  r3: { en: 'Sanitary & Tiles', bn: 'স্যানিটারি ও টাইলস' },
+  r4: { en: 'Carpenter & Labor Wage', bn: 'মিস্ত্রি ও শ্রমিক মজুরি' },
+  r5: { en: 'Site Transport & Fuel', bn: 'সাইট পরিবহন ও জ্বালানি' },
+  r6: { en: 'Food & Refreshment', bn: 'শ্রমিকদের খাবার ও চা-নাস্তা' },
+};
+
+function formatReason(name?: string, id?: string, lang = 'bn') {
+  if (name && !name.startsWith('r-') && name !== id && !FALLBACK_REASONS[name]) return name;
+  if (id && FALLBACK_REASONS[id]) {
+    return lang === 'bn' ? FALLBACK_REASONS[id].bn : FALLBACK_REASONS[id].en;
+  }
+  if (name && FALLBACK_REASONS[name]) {
+    return lang === 'bn' ? FALLBACK_REASONS[name].bn : FALLBACK_REASONS[name].en;
+  }
+  return name || id || 'সাধারণ খরচ';
+}
+
 export const RecentExpensesTable: React.FC<RecentExpensesTableProps> = ({ costings, onRefresh }) => {
   const { t, i18n } = useTranslation();
   const lang = i18n.language.startsWith('bn') ? 'bn' : 'en';
@@ -77,7 +97,7 @@ export const RecentExpensesTable: React.FC<RecentExpensesTableProps> = ({ costin
                 return (
                   <tr key={c.costingId} className="hover:bg-slate-50/80 transition-colors">
                     <td className="py-3 px-3">
-                      <div className="font-bold text-slate-900 text-sm">{c.reasonName || c.reasonId}</div>
+                      <div className="font-bold text-slate-900 text-sm">{formatReason(c.reasonName, c.reasonId, lang)}</div>
                       <div className="text-xs text-slate-400 mt-0.5">{formatDate(c.createdAt, lang)}</div>
                     </td>
 
