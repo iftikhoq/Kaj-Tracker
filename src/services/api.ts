@@ -221,6 +221,29 @@ export const api = {
   },
 
   // Settings
+  async getSettings() {
+    if (!isLiveBackendAvailable()) {
+      const saved = dataStore.getSettings();
+      return {
+        secrets: {
+          googleServiceAccount: true,
+          firebaseAdmin: true,
+          sheetIdConfigured: Boolean(saved.sheetId),
+        },
+        sheetId: saved.sheetId || '',
+        serviceAccountEmail: 'demo-service-account@kajtracker.iam.gserviceaccount.com',
+      };
+    }
+    const res = await fetch('/api/settings', {
+      headers: { Authorization: `Bearer ${getAuthToken()}` },
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Failed to fetch settings from server');
+    }
+    return await res.json();
+  },
+
   async testSheetConnection(sheetId: string) {
     if (!isLiveBackendAvailable()) {
       // Mock test response
@@ -229,6 +252,7 @@ export const api = {
         success: true,
         title: 'Kaj Tracker Primary Ledger (Google Sheets)',
         sheets: ['Users', 'Works', 'WorkUsers', 'Costings', 'Reasons', 'Metrics', 'AuditLog'],
+        serviceAccountEmail: 'demo-service-account@kajtracker.iam.gserviceaccount.com',
       };
     }
     const res = await fetch('/api/settings', {
@@ -239,7 +263,10 @@ export const api = {
       },
       body: JSON.stringify({ action: 'TEST_CONNECTION', spreadsheetId: sheetId }),
     });
-    if (!res.ok) throw new Error('Connection test failed');
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || `HTTP ${res.status}: Connection test failed`);
+    }
     return await res.json();
   },
 
@@ -259,7 +286,10 @@ export const api = {
       },
       body: JSON.stringify({ action: 'INITIALIZE_SHEETS', spreadsheetId: sheetId }),
     });
-    if (!res.ok) throw new Error('Initialization failed');
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || `HTTP ${res.status}: Initialization failed`);
+    }
     return await res.json();
   },
 };

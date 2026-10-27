@@ -28,13 +28,72 @@ export const TAB_HEADERS: Record<string, string[]> = {
   [SHEET_TABS.AUDIT_LOG]: ['timestamp', 'userId', 'action', 'entity', 'before', 'after'],
 };
 
-export function getGoogleSheetsClient() {
-  const credentialsJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
-  if (!credentialsJson) {
-    throw new Error('GOOGLE_SERVICE_ACCOUNT_JSON environment variable is not configured');
+/**
+ * Safely parse service account JSON from environment variables.
+ * Handles base64 strings, escaped newlines in private keys, and wrapping quotes.
+ */
+export function parseServiceAccountCredentials(raw?: string): any {
+  if (!raw) return null;
+  let str = raw.trim();
+
+  // Strip single or double quotes wrapped around the whole string
+  if ((str.startsWith('"') && str.endsWith('"')) || (str.startsWith("'") && str.endsWith("'"))) {
+    str = str.slice(1, -1).trim();
   }
 
-  const credentials = typeof credentialsJson === 'string' ? JSON.parse(credentialsJson) : credentialsJson;
+  // Handle Base64-encoded JSON if applicable
+  if (!str.startsWith('{')) {
+    try {
+      const decoded = Buffer.from(str, 'base64').toString('utf8');
+      if (decoded.trim().startsWith('{')) {
+        str = decoded.trim();
+      }
+    } catch {
+      // Continue with original string
+    }
+  }
+
+  let parsed: any;
+  try {
+    parsed = typeof str === 'string' ? JSON.parse(str) : str;
+  } catch (err: any) {
+    throw new Error(`JSON credentials parse error: ${err.message}. Please check your environment variable format.`);
+  }
+
+  if (typeof parsed === 'string') {
+    try {
+      parsed = JSON.parse(parsed);
+    } catch {}
+  }
+
+  // CRITICAL FOR VERCEL & OPENSSL:
+  // Convert escaped literal backslash-n ('\\n') back into real newline characters ('\n')
+  if (parsed?.private_key && typeof parsed.private_key === 'string') {
+    parsed.private_key = parsed.private_key.replace(/\\n/g, '\n');
+  }
+
+  return parsed;
+}
+
+export function getServiceAccountEmail(): string | null {
+  try {
+    const creds = parseServiceAccountCredentials(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
+    return creds?.client_email || null;
+  } catch {
+    return null;
+  }
+}
+
+export function getGoogleSheetsClient() {
+  const credentials = parseServiceAccountCredentials(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
+  if (!credentials) {
+    throw new Error('GOOGLE_SERVICE_ACCOUNT_JSON environment variable is not configured in Vercel');
+  }
+
+  if (!credentials.client_email || !credentials.private_key) {
+    throw new Error('GOOGLE_SERVICE_ACCOUNT_JSON is missing client_email or private_key');
+  }
+
   const auth = new google.auth.GoogleAuth({
     credentials,
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],

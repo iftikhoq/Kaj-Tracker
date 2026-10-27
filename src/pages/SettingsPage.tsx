@@ -16,6 +16,9 @@ import {
   Table,
   Layers,
   Sparkles,
+  Copy,
+  Mail,
+  AlertCircle,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -27,6 +30,7 @@ export const SettingsPage: React.FC = () => {
   // Settings State
   const [sheetId, setSheetId] = useState('');
   const [firebaseConfigJson, setFirebaseConfigJson] = useState('');
+  const [serviceAccountEmail, setServiceAccountEmail] = useState<string | null>(null);
   const [secretsStatus, setSecretsStatus] = useState({
     googleServiceAccount: false,
     firebaseAdmin: false,
@@ -50,17 +54,25 @@ export const SettingsPage: React.FC = () => {
     loadSharedLists();
   }, []);
 
-  const loadSettings = () => {
+  const loadSettings = async () => {
     const saved = dataStore.getSettings();
     setSheetId(saved.sheetId || import.meta.env.SHEET_ID || '');
     setFirebaseConfigJson(saved.firebaseWebConfig || '');
 
-    // Check env status
-    setSecretsStatus({
-      googleServiceAccount: true, // Configured / mocked in environment
-      firebaseAdmin: true,
-      sheetIdConfigured: Boolean(saved.sheetId || import.meta.env.SHEET_ID),
-    });
+    try {
+      const serverSettings = await api.getSettings();
+      if (serverSettings.sheetId && !saved.sheetId) {
+        setSheetId(serverSettings.sheetId);
+      }
+      if (serverSettings.secrets) {
+        setSecretsStatus(serverSettings.secrets);
+      }
+      if (serverSettings.serviceAccountEmail) {
+        setServiceAccountEmail(serverSettings.serviceAccountEmail);
+      }
+    } catch (e) {
+      console.warn('Could not fetch server settings status:', e);
+    }
   };
 
   const loadSharedLists = async () => {
@@ -91,9 +103,12 @@ export const SettingsPage: React.FC = () => {
     try {
       const res = await api.testSheetConnection(sheetId.trim());
       setTestResult(res);
+      if (res.serviceAccountEmail) {
+        setServiceAccountEmail(res.serviceAccountEmail);
+      }
       toast.success('গুগল স্প্রেডশিট সংযোগ সফল হয়েছে!');
     } catch (err: any) {
-      toast.error(err.message || 'সংযোগ ব্যর্থ হয়েছে');
+      toast.error(err.message || 'সংযোগ ব্যর্থ হয়েছে', { duration: 10000 });
     } finally {
       setTestingConnection(false);
     }
@@ -112,7 +127,7 @@ export const SettingsPage: React.FC = () => {
       toast.success('সকল টেবিল ও হেডার সফলভাবে তৈরি করা হয়েছে!');
       handleTestConnection();
     } catch (err: any) {
-      toast.error(err.message || 'টেবিল তৈরি ব্যর্থ হয়েছে');
+      toast.error(err.message || 'টেবিল তৈরি ব্যর্থ হয়েছে', { duration: 10000 });
     } finally {
       setInitializingSheets(false);
     }
@@ -208,6 +223,37 @@ export const SettingsPage: React.FC = () => {
                 </button>
               </div>
 
+              {/* Service Account Share Guide Helper Banner */}
+              {serviceAccountEmail && (
+                <div className="p-3.5 bg-emerald-950/20 border border-emerald-500/40 rounded-xl text-xs text-emerald-900 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                  <div className="flex items-start gap-2">
+                    <Mail size={16} className="text-emerald-600 shrink-0 mt-0.5" />
+                    <div>
+                      <div className="font-bold text-slate-900">
+                        সার্ভিস অ্যাকাউন্ট ইমেইল (Google Sheet Share Target):
+                      </div>
+                      <div className="font-mono text-emerald-800 font-semibold select-all break-all text-xs">
+                        {serviceAccountEmail}
+                      </div>
+                      <p className="text-slate-600 text-2xs mt-0.5">
+                        আপনার স্প্রেডশিটে গিয়ে <strong className="text-slate-900">Share</strong> বাটনে ক্লিক করে উপরের ইমেইলটিকে <strong className="text-emerald-700">Editor</strong> হিসেবে যুক্ত করুন।
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(serviceAccountEmail);
+                      toast.success('সার্ভিস অ্যাকাউন্ট ইমেইল কপি করা হয়েছে!');
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shrink-0 transition-colors self-start sm:self-center text-xs"
+                  >
+                    <Copy size={13} />
+                    <span>ইমেইল কপি</span>
+                  </button>
+                </div>
+              )}
+
               {testResult && (
                 <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-900 mt-3 space-y-1">
                   <div className="flex items-center gap-2 font-bold text-xs">
@@ -245,10 +291,17 @@ export const SettingsPage: React.FC = () => {
                   <div className="font-bold text-slate-800">{t('settings.googleServiceAccount')}</div>
                   <div className="text-2xs text-slate-400 font-mono mt-0.5">GOOGLE_SERVICE_ACCOUNT_JSON</div>
                 </div>
-                <span className="inline-flex items-center gap-1 text-emerald-700 font-bold bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
-                  <CheckCircle size={13} />
-                  <span>{t('settings.configured')}</span>
-                </span>
+                {secretsStatus.googleServiceAccount ? (
+                  <span className="inline-flex items-center gap-1 text-emerald-700 font-bold bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
+                    <CheckCircle size={13} />
+                    <span>{t('settings.configured')}</span>
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 text-rose-700 font-bold bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200">
+                    <AlertCircle size={13} />
+                    <span>কনফিগার করা নেই</span>
+                  </span>
+                )}
               </div>
 
               <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center justify-between">
@@ -256,10 +309,16 @@ export const SettingsPage: React.FC = () => {
                   <div className="font-bold text-slate-800">{t('settings.firebaseAdmin')}</div>
                   <div className="text-2xs text-slate-400 font-mono mt-0.5">FIREBASE_ADMIN_JSON</div>
                 </div>
-                <span className="inline-flex items-center gap-1 text-emerald-700 font-bold bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
-                  <CheckCircle size={13} />
-                  <span>{t('settings.configured')}</span>
-                </span>
+                {secretsStatus.firebaseAdmin ? (
+                  <span className="inline-flex items-center gap-1 text-emerald-700 font-bold bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
+                    <CheckCircle size={13} />
+                    <span>{t('settings.configured')}</span>
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 text-slate-600 font-medium bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">
+                    <span>ঐচ্ছিক / অটো-ফলব্যাক</span>
+                  </span>
+                )}
               </div>
             </div>
           </div>

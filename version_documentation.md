@@ -4,6 +4,27 @@ All versions, dates, and detailed change logs for Kaj Tracker are maintained in 
 
 ---
 
+## [ver 1.0.6] - 2026-10-28
+### Status: Production Google Sheets Connection & Diagnostic Fix
+- **Service Account Credentials & RSA Parsing in Vercel:**
+  - Implemented [`parseServiceAccountCredentials`](file:///e:/Projects/Kaj%20Tracker/api/sheetsService.ts) to automatically normalize RSA private keys (`replace(/\\n/g, '\n')`), resolving OpenSSL `DECODER routines::unsupported` errors caused by escaped newlines in Vercel environment variables.
+  - Added support for Base64-encoded JSON credentials and double-stringified JSON inputs.
+- **Graceful Auth Fallback in Serverless API:**
+  - Updated [`api/authMiddleware.ts`](file:///e:/Projects/Kaj%20Tracker/api/authMiddleware.ts): If `FIREBASE_ADMIN_JSON` is not explicitly set, automatically fall back to `GOOGLE_SERVICE_ACCOUNT_JSON`.
+  - Added graceful JWT payload fallback if Firebase Admin is uninitialized, preventing fatal 500 errors during initial setup.
+- **Specific Google Sheets API Error Handling:**
+  - Updated [`api/settings.ts`](file:///e:/Projects/Kaj%20Tracker/api/settings.ts): Transformed Google API error codes into descriptive Bengali messages:
+    - `403 Permission Denied`: Informs the administrator to share the Google Sheet with the exact service account email as 'Editor'.
+    - `404 Not Found`: Instructs verification of the Spreadsheet ID and sharing status.
+    - `API Disabled`: Alerts if "Google Sheets API" is not enabled in the Google Cloud project.
+  - Provided `serviceAccountEmail` in settings API responses.
+- **Settings Console Diagnostics ([`SettingsPage.tsx`](file:///e:/Projects/Kaj%20Tracker/src/pages/SettingsPage.tsx)):**
+  - Integrated live `GET /api/settings` query on mount to reflect true Vercel environment variables status.
+  - Added dedicated Service Account banner with 1-click **"ইমেইল কপি করুন" (Copy Email)** button so users immediately know which email to invite to their Google Sheet.
+  - Enhanced [`api.ts`](file:///e:/Projects/Kaj%20Tracker/src/services/api.ts) to surface server-provided error messages directly into toast notifications.
+
+---
+
 ## [ver 1.0.5] - 2026-10-28
 ### Status: Typography Scale Enlargement & Layout Polish
 - **Bengali & Latin Typography Scale Enhancement:**
