@@ -4,6 +4,15 @@ All versions, dates, and detailed change logs for Kaj Tracker are maintained in 
 
 ---
 
+## [ver 1.0.7] - 2026-10-28
+### Status: Serverless Production Dependencies Fix for Vercel
+- **Serverless Dependencies Relocation ([`package.json`](file:///e:/Projects/Kaj%20Tracker/package.json)):**
+  - Moved `googleapis` and `firebase-admin` from `devDependencies` into production `dependencies`.
+  - In Vercel serverless environments with `NODE_ENV=production`, packages in `devDependencies` are pruned during deployment. This caused runtime `MODULE_NOT_FOUND` exceptions whenever serverless endpoints (`/api/settings`, `/api/works`, `/api/costings`, etc.) attempted to import `firebase-admin` or `googleapis`, leading directly to HTTP 500 Internal Server Errors.
+  - Verified local installation and production build verification (`npm run build`).
+
+---
+
 ## [ver 1.0.6] - 2026-10-28
 ### Status: Production Google Sheets Connection & Diagnostic Fix
 - **Service Account Credentials & RSA Parsing in Vercel:**
