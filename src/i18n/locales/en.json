@@ -57,7 +57,7 @@
     "source": "Payment Source",
     "sourceBudget": "Paid from Budget / Fund",
     "sourcePersonal": "Paid Out of Pocket (Personal)",
-    "sourceNote": "Personal expenses can be reimbursed by an admin later",
+    "sourceNote": "Personal expenses can be marked as reimbursed by the expense owner",
     "note": "Additional Notes / Remarks",
     "spentBy": "Spent By",
     "status": "Status",
