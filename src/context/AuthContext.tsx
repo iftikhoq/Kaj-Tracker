@@ -36,13 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return null;
       }
     }
-    // Default to main admin in development mode for convenience
-    const allUsers = dataStore.getUsers();
-    const adminUser = allUsers.find((u) => u.email.toLowerCase() === MAIN_ADMIN_EMAIL) || allUsers[0];
-    if (adminUser && adminUser.email.toLowerCase() === MAIN_ADMIN_EMAIL) {
-      adminUser.role = 'main_admin';
-    }
-    return adminUser || null;
+    return null;
   });
 
   const [loading, setLoading] = useState(false);

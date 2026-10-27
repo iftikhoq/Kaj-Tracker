@@ -4,6 +4,17 @@ All versions, dates, and detailed change logs for Kaj Tracker are maintained in 
 
 ---
 
+## [ver 1.1.2] - 2026-10-28
+### Status: Clean Initial Session State & Auto-Login Dev Fallback Removal
+- **Removed Auto-Login Development Fallback ([`AuthContext.tsx`](file:///e:/Projects/Kaj%20Tracker/src/context/AuthContext.tsx)):**
+  - Removed dev fallback code in `currentUser` state initialization that automatically logged unauthenticated first-time visitors in as `adminUser`.
+  - Initial session now strictly defaults to `null` if no active session is found in `localStorage.getItem('kaj_current_user')`.
+  - When opening from any new browser, private window, or unauthenticated session, the app correctly routes to the `/login` screen showing the Sign In prompt.
+- **Cleared Default Auth Token Fallback ([`src/services/api.ts`](file:///e:/Projects/Kaj%20Tracker/src/services/api.ts)):**
+  - Updated `getAuthToken()` to return an empty string `''` when no auth token is stored in `localStorage`, preventing unauthenticated requests from falsely claiming admin bearer tokens.
+
+---
+
 ## [ver 1.1.1] - 2026-10-28
 ### Status: Member Removal, Work Scope Scoping & Assign Modal Filtering
 - **Member Removal from Work (`DELETE /api/users`):**

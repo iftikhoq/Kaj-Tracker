@@ -30,7 +30,7 @@ export const isLiveBackendAvailable = (): boolean => {
 };
 
 const getAuthToken = (): string => {
-  return localStorage.getItem('kaj_auth_token') || 'dev_token_user_ifti_admin';
+  return localStorage.getItem('kaj_auth_token') || '';
 };
 
 const getHeaders = (extra: Record<string, string> = {}): Record<string, string> => {
