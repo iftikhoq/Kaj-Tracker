@@ -4,6 +4,7 @@ import { useWork } from '../../context/WorkContext';
 import { useAuth } from '../../context/AuthContext';
 import { api } from '../../services/api';
 import { Reason, Metric, CostingSource } from '../../types/models';
+import { Modal } from '../common/Modal';
 import { Plus, X, AlertCircle, Check, DollarSign, Tag, Scale } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -127,26 +128,15 @@ export const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClos
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-      <div className="bg-white rounded-2xl shadow-depth-lg border border-slate-200/80 w-full max-w-lg overflow-hidden modal-enter">
-        {/* Modal Header */}
-        <div className="px-6 py-4 bg-gradient-to-r from-slate-900 to-emerald-950 text-white flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
-              <Plus size={18} />
-            </div>
-            <h3 className="font-bold text-base">{t('expenses.addModalTitle')}</h3>
-          </div>
-          <button onClick={onClose} className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/10">
-            <X size={18} />
-          </button>
-        </div>
-
-        {/* Modal Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4 text-xs">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={t('expenses.addModalTitle')}
+      icon={<Plus size={18} />}
+      maxWidth="max-w-lg"
+    >
+      <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           {/* Reason / Category */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
@@ -374,8 +364,7 @@ export const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClos
             </button>
           </div>
         </form>
-      </div>
-    </div>
+    </Modal>
   );
 };
 

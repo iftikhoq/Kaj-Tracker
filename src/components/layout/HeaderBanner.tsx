@@ -114,7 +114,7 @@ export const HeaderBanner: React.FC = () => {
   const greeting = getGreeting(lang);
 
   return (
-    <div className="relative z-20 rounded-2xl mb-6 bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 shadow-depth-lg border border-slate-700/60 no-print">
+    <div className="relative z-10 rounded-2xl mb-6 bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 shadow-depth-lg border border-slate-700/60 no-print">
       {/* Decorative Radial Glows and Watermark (clipped to rounded corners) */}
       <div aria-hidden="true" className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
         <div className="absolute -right-10 -top-10 w-72 h-72 rounded-full bg-emerald-500/10 blur-3xl" />

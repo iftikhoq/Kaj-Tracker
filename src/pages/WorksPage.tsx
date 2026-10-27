@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
 import { Work } from '../types/models';
 import { formatCurrency, formatDate } from '../utils/formatters';
+import { Modal } from '../components/common/Modal';
 import { Briefcase, Plus, CheckCircle2, Clock, MapPin, Building, X } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -186,107 +187,102 @@ export const WorksPage: React.FC = () => {
       </div>
 
       {/* Create Work Modal */}
-      {isCreateOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-depth-lg border border-slate-200/80 w-full max-w-lg overflow-hidden modal-enter">
-            <div className="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
-              <h3 className="font-bold text-sm">{t('works.createNew')}</h3>
-              <button onClick={() => setIsCreateOpen(false)}>
-                <X size={18} className="text-slate-400 hover:text-white" />
-              </button>
+      <Modal
+        isOpen={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+        title={t('works.createNew')}
+        icon={<Plus size={18} />}
+        maxWidth="max-w-lg"
+      >
+        <form onSubmit={handleCreate} className="space-y-4 text-xs">
+          <div>
+            <label className="font-semibold text-slate-700 block mb-1">
+              {t('works.workName')} *
+            </label>
+            <input
+              type="text"
+              required
+              placeholder="Ex: Gulshan Corporate Office Renovation"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
+            />
+          </div>
+
+          <div>
+            <label className="font-semibold text-slate-700 block mb-1">
+              {t('works.workNameBn')}
+            </label>
+            <input
+              type="text"
+              placeholder="যেমন: গুলশান কর্পোরেট অফিস সংস্কার"
+              value={nameBn}
+              onChange={(e) => setNameBn(e.target.value)}
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="font-semibold text-slate-700 block mb-1">
+                {t('works.department')}
+              </label>
+              <input
+                type="text"
+                placeholder="Ex: Civil & Interior"
+                value={department}
+                onChange={(e) => setDepartment(e.target.value)}
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
+              />
             </div>
 
-            <form onSubmit={handleCreate} className="p-6 space-y-4 text-xs">
-              <div>
-                <label className="font-semibold text-slate-700 block mb-1">
-                  {t('works.workName')} *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Ex: Gulshan Corporate Office Renovation"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
-                />
-              </div>
-
-              <div>
-                <label className="font-semibold text-slate-700 block mb-1">
-                  {t('works.workNameBn')}
-                </label>
-                <input
-                  type="text"
-                  placeholder="যেমন: গুলশান কর্পোরেট অফিস সংস্কার"
-                  value={nameBn}
-                  onChange={(e) => setNameBn(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="font-semibold text-slate-700 block mb-1">
-                    {t('works.department')}
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ex: Civil & Interior"
-                    value={department}
-                    onChange={(e) => setDepartment(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
-                  />
-                </div>
-
-                <div>
-                  <label className="font-semibold text-slate-700 block mb-1">
-                    {t('works.totalBudget')} *
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    required
-                    placeholder="Ex: 1500000"
-                    value={totalBudget}
-                    onChange={(e) => setTotalBudget(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-bold text-sm"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="font-semibold text-slate-700 block mb-1">
-                  {t('works.address')}
-                </label>
-                <input
-                  type="text"
-                  placeholder="Ex: Road 11, Gulshan-1, Dhaka"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">
-                <button
-                  type="button"
-                  onClick={() => setIsCreateOpen(false)}
-                  className="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 font-semibold"
-                >
-                  {t('common.cancel')}
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-md shadow-emerald-950/20"
-                >
-                  {loading ? t('common.loading') : t('common.save')}
-                </button>
-              </div>
-            </form>
+            <div>
+              <label className="font-semibold text-slate-700 block mb-1">
+                {t('works.totalBudget')} *
+              </label>
+              <input
+                type="number"
+                min="0"
+                required
+                placeholder="Ex: 1500000"
+                value={totalBudget}
+                onChange={(e) => setTotalBudget(e.target.value)}
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-bold text-sm"
+              />
+            </div>
           </div>
-        </div>
-      )}
+
+          <div>
+            <label className="font-semibold text-slate-700 block mb-1">
+              {t('works.address')}
+            </label>
+            <input
+              type="text"
+              placeholder="Ex: Road 11, Gulshan-1, Dhaka"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
+            />
+          </div>
+
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">
+            <button
+              type="button"
+              onClick={() => setIsCreateOpen(false)}
+              className="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 font-semibold"
+            >
+              {t('common.cancel')}
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-md shadow-emerald-950/20"
+            >
+              {loading ? t('common.loading') : t('common.save')}
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };

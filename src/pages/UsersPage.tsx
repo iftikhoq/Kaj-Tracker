@@ -6,6 +6,7 @@ import { api } from '../services/api';
 import { dataStore } from '../services/storage';
 import { User, UserExpenseSummary } from '../types/models';
 import { formatCurrency } from '../utils/formatters';
+import { Modal } from '../components/common/Modal';
 import {
   Users as UsersIcon,
   UserPlus,
@@ -243,68 +244,63 @@ export const UsersPage: React.FC = () => {
       </div>
 
       {/* Assign Member Modal */}
-      {isAssignModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-depth-lg border border-slate-200/80 w-full max-w-md overflow-hidden modal-enter">
-            <div className="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
-              <h3 className="font-bold text-sm">{t('users.assignUser')}</h3>
-              <button onClick={() => setIsAssignModalOpen(false)}>
-                <X size={18} className="text-slate-400 hover:text-white" />
-              </button>
-            </div>
-
-            <form onSubmit={handleAssignMember} className="p-6 space-y-4 text-xs">
-              <div>
-                <label className="font-semibold text-slate-700 block mb-1">
-                  সদস্য নির্বাচন করুন / Select Member *
-                </label>
-                <select
-                  required
-                  value={selectedUserId}
-                  onChange={(e) => setSelectedUserId(e.target.value)}
-                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
-                >
-                  <option value="">— সদস্য বেছে নিন —</option>
-                  {allSystemUsers.map((u) => (
-                    <option key={u.uid} value={u.uid}>
-                      {u.name_bn || u.name} ({u.email})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="font-semibold text-slate-700 block mb-1">
-                  প্রাথমিক বিনিয়োগ (৳) / Initial Investment
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  value={initialInvestment}
-                  onChange={(e) => setInitialInvestment(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-bold text-sm"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">
-                <button
-                  type="button"
-                  onClick={() => setIsAssignModalOpen(false)}
-                  className="px-4 py-2 rounded-xl border border-slate-300 text-slate-700"
-                >
-                  {t('common.cancel')}
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
-                >
-                  {t('common.save')}
-                </button>
-              </div>
-            </form>
+      <Modal
+        isOpen={isAssignModalOpen}
+        onClose={() => setIsAssignModalOpen(false)}
+        title={t('users.assignUser')}
+        icon={<UserPlus size={18} />}
+        maxWidth="max-w-md"
+      >
+        <form onSubmit={handleAssignMember} className="space-y-4 text-xs">
+          <div>
+            <label className="font-semibold text-slate-700 block mb-1">
+              সদস্য নির্বাচন করুন / Select Member *
+            </label>
+            <select
+              required
+              value={selectedUserId}
+              onChange={(e) => setSelectedUserId(e.target.value)}
+              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
+            >
+              <option value="">— সদস্য বেছে নিন —</option>
+              {allSystemUsers.map((u) => (
+                <option key={u.uid} value={u.uid}>
+                  {u.name_bn || u.name} ({u.email})
+                </option>
+              ))}
+            </select>
           </div>
-        </div>
-      )}
+
+          <div>
+            <label className="font-semibold text-slate-700 block mb-1">
+              প্রাথমিক বিনিয়োগ (৳) / Initial Investment
+            </label>
+            <input
+              type="number"
+              min="0"
+              value={initialInvestment}
+              onChange={(e) => setInitialInvestment(e.target.value)}
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-bold text-sm"
+            />
+          </div>
+
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">
+            <button
+              type="button"
+              onClick={() => setIsAssignModalOpen(false)}
+              className="px-4 py-2 rounded-xl border border-slate-300 text-slate-700"
+            >
+              {t('common.cancel')}
+            </button>
+            <button
+              type="submit"
+              className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+            >
+              {t('common.save')}
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };

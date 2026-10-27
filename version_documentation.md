@@ -4,6 +4,19 @@ All versions, dates, and detailed change logs for Kaj Tracker are maintained in 
 
 ---
 
+## [ver 1.0.4] - 2026-10-28
+### Status: Stacking Context & Portal Modal Elevation Fix
+- **Modal Stacking Context Resolution:**
+  - Diagnosed stacking context entrapment caused by parent container CSS animation (`.t-panel-slide` with `transform: translateY(...)`), which was trapping `position: fixed` modals beneath the sibling [`HeaderBanner`](file:///e:/Projects/Kaj%20Tracker/src/components/layout/HeaderBanner.tsx).
+  - Created a universal [`Modal.tsx`](file:///e:/Projects/Kaj%20Tracker/src/components/common/Modal.tsx) component using `createPortal(..., document.body)` with `z-[100]` and `overflow-y-auto`.
+  - Re-anchored all dialog modals in the app into this portal architecture:
+    - Create Work Modal in [`WorksPage.tsx`](file:///e:/Projects/Kaj%20Tracker/src/pages/WorksPage.tsx)
+    - Add Expense Modal in [`AddExpenseModal.tsx`](file:///e:/Projects/Kaj%20Tracker/src/components/expenses/AddExpenseModal.tsx)
+    - Assign Member Modal in [`UsersPage.tsx`](file:///e:/Projects/Kaj%20Tracker/src/pages/UsersPage.tsx)
+  - Added automatic background scroll locking (`document.body.style.overflow = 'hidden'`) and Escape key dismiss listeners.
+
+---
+
 ## [ver 1.0.3] - 2026-10-28
 ### Status: Business Rule Update - Owner-Exclusive Expense Reimbursement
 - **Reimbursement Authorization Change:**
