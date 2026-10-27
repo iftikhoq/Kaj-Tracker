@@ -22,7 +22,7 @@
 2. **Access & Permissions:**
    - Anyone can sign in with Google.
    - Unassigned users are shown a clean "Waiting for Admin Assignment" screen.
-   - **Main Admin:** Identified globally by `MAIN_ADMIN_EMAIL`. Can view/manage every work, access system settings (Sheets connection, Firebase configuration, Sheet initializations), and assign users.
+   - **Main Admin:** Identified globally by `MAIN_ADMIN_EMAIL` (`ifti.k.hoq@gmail.com`). Can view/manage every work, access system settings (Sheets connection, Firebase configuration, Sheet initializations), and assign users.
    - **Work Admin:** The creator of the Work (`createdBy`). Can edit the work details, assign users, view reports, and reimburse personal expenses.
    - **Users:** Assigned members of a work. Can log personal or budget expenses, update their own investment number, view reports, and export PDFs.
 3. **Reimbursements:**

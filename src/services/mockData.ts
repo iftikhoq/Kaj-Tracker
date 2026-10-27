@@ -4,8 +4,8 @@ export const INITIAL_USERS: User[] = [
   {
     uid: 'user_ifti_admin',
     name: 'Ifti',
-    name_bn: 'ইফতি (অ্যাডমিন)',
-    email: 'ifti@kajtracker.com',
+    name_bn: 'ইফতি (প্রধান অ্যাডমিন)',
+    email: 'ifti.k.hoq@gmail.com',
     role: 'main_admin',
     createdAt: '2026-10-01T08:00:00Z',
     avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',

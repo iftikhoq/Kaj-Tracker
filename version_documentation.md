@@ -4,6 +4,18 @@ All versions, dates, and detailed change logs for Kaj Tracker are maintained in 
 
 ---
 
+## [ver 1.0.2] - 2026-10-28
+### Status: Global Admin Designation & Vercel Production Readiness
+- **Global Administrator Update:**
+  - Configured `ifti.k.hoq@gmail.com` as the default global main administrator (`main_admin`) across server middleware ([`authMiddleware.ts`](file:///e:/Projects/Kaj%20Tracker/api/authMiddleware.ts)), client context ([`AuthContext.tsx`](file:///e:/Projects/Kaj%20Tracker/src/context/AuthContext.tsx)), mock store seed data ([`mockData.ts`](file:///e:/Projects/Kaj%20Tracker/src/services/mockData.ts)), and unit test assertions ([`apiMiddleware.test.ts`](file:///e:/Projects/Kaj%20Tracker/tests/apiMiddleware.test.ts)).
+  - Ensured client-side synchronization automatically promotes `ifti.k.hoq@gmail.com` to `main_admin` upon signing in with Google or selecting demo admin.
+- **Vercel Serverless & Deployment Readiness:**
+  - Configured [vercel.json](file:///e:/Projects/Kaj%20Tracker/vercel.json) with explicit negative lookahead rewrites (`/((?!api/).*)` -> `/index.html`) so API serverless endpoints are never swallowed by SPA routing.
+  - Added [api/users.ts](file:///e:/Projects/Kaj%20Tracker/api/users.ts) (user listing, assignment to works, and investment patching) and [api/categories.ts](file:///e:/Projects/Kaj%20Tracker/api/categories.ts) (reasons and metrics CRUD) for complete backend coverage on Google Sheets.
+  - Implemented Rollup code-splitting in [vite.config.ts](file:///e:/Projects/Kaj%20Tracker/vite.config.ts) (`vendor-react`, `vendor-charts`, `vendor-ui`) achieving sub-5s production build times and eliminating large chunk warnings.
+
+---
+
 ## [ver 1.0.1] - 2026-10-28
 ### Status: UI Polish & Dropdown Overflow Fix
 - **Header Banner Overflow Resolution:**

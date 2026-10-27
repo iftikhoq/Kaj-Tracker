@@ -15,20 +15,33 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const MAIN_ADMIN_EMAIL = (import.meta.env.MAIN_ADMIN_EMAIL || 'ifti@kajtracker.com').toLowerCase();
+const MAIN_ADMIN_EMAIL = (
+  import.meta.env.VITE_MAIN_ADMIN_EMAIL ||
+  import.meta.env.MAIN_ADMIN_EMAIL ||
+  'ifti.k.hoq@gmail.com'
+).toLowerCase().trim();
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     const saved = localStorage.getItem('kaj_current_user');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed: User = JSON.parse(saved);
+        if (parsed.email?.toLowerCase().trim() === MAIN_ADMIN_EMAIL) {
+          parsed.role = 'main_admin';
+        }
+        return parsed;
       } catch {
         return null;
       }
     }
-    // Default to initial admin in development mode for convenience
-    return dataStore.getUsers()[0] || null;
+    // Default to main admin in development mode for convenience
+    const allUsers = dataStore.getUsers();
+    const adminUser = allUsers.find((u) => u.email.toLowerCase() === MAIN_ADMIN_EMAIL) || allUsers[0];
+    if (adminUser && adminUser.email.toLowerCase() === MAIN_ADMIN_EMAIL) {
+      adminUser.role = 'main_admin';
+    }
+    return adminUser || null;
   });
 
   const [loading, setLoading] = useState(false);
@@ -79,9 +92,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loginAsDemo = (role: 'main_admin' | 'user') => {
     const users = dataStore.getUsers();
-    const targetUser = role === 'main_admin'
-      ? users.find((u) => u.role === 'main_admin') || users[0]
-      : users.find((u) => u.role === 'user') || users[1];
+    let targetUser: User;
+    if (role === 'main_admin') {
+      const found = users.find((u) => u.email.toLowerCase() === MAIN_ADMIN_EMAIL);
+      if (found) {
+        targetUser = { ...found, role: 'main_admin' };
+      } else {
+        targetUser = {
+          uid: 'user_ifti_admin',
+          name: 'Ifti',
+          name_bn: 'ইফতি (প্রধান অ্যাডমিন)',
+          email: MAIN_ADMIN_EMAIL,
+          role: 'main_admin',
+          createdAt: '2026-10-01T08:00:00Z',
+        };
+      }
+      dataStore.saveUser(targetUser);
+    } else {
+      targetUser = users.find((u) => u.role === 'user') || users[1];
+    }
 
     if (targetUser) {
       localStorage.setItem('kaj_auth_token', `dev_token_${targetUser.uid}`);

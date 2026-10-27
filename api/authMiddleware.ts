@@ -47,9 +47,10 @@ export async function verifyAuthHeader(authHeader?: string): Promise<AuthUserCon
   // Handle mock dev tokens for testing and preview
   if (token.startsWith('dev_token_')) {
     const isMainAdmin = token.includes('admin');
+    const mainEmail = (process.env.MAIN_ADMIN_EMAIL || 'ifti.k.hoq@gmail.com').toLowerCase().trim();
     return {
       uid: token.replace('dev_token_', ''),
-      email: isMainAdmin ? (process.env.MAIN_ADMIN_EMAIL || 'admin@kajtracker.com') : 'user@kajtracker.com',
+      email: isMainAdmin ? mainEmail : 'user@kajtracker.com',
       name: isMainAdmin ? 'Admin Ifti' : 'Project Member',
       isMainAdmin,
     };
@@ -61,7 +62,7 @@ export async function verifyAuthHeader(authHeader?: string): Promise<AuthUserCon
   }
 
   const decoded = await adminApp.auth().verifyIdToken(token);
-  const mainAdminEmail = (process.env.MAIN_ADMIN_EMAIL || '').toLowerCase().trim();
+  const mainAdminEmail = (process.env.MAIN_ADMIN_EMAIL || 'ifti.k.hoq@gmail.com').toLowerCase().trim();
   const userEmail = (decoded.email || '').toLowerCase().trim();
 
   return {

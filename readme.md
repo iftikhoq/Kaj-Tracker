@@ -53,8 +53,9 @@ npm install
 ### 2. Environment Setup
 Copy `.env.example` to `.env.local` and provide your credentials:
 ```env
-# Main Administrator
-MAIN_ADMIN_EMAIL=admin@example.com
+# Main Administrator (Global Admin)
+MAIN_ADMIN_EMAIL=ifti.k.hoq@gmail.com
+VITE_MAIN_ADMIN_EMAIL=ifti.k.hoq@gmail.com
 
 # Firebase Client (Public)
 VITE_FIREBASE_API_KEY=your_api_key
@@ -68,6 +69,7 @@ VITE_FIREBASE_APP_ID=your_app_id
 SHEET_ID=your_google_spreadsheet_id
 GOOGLE_SERVICE_ACCOUNT_JSON={"type":"service_account",...}
 FIREBASE_ADMIN_JSON={"type":"service_account",...}
+VITE_USE_LIVE_API=true
 ```
 
 > **Note:** The app includes an automatic fallback dev-mode with mock data if Google credentials are not yet configured, allowing you to test the entire interface and workflows immediately!

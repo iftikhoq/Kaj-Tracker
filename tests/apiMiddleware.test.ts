@@ -47,6 +47,12 @@ describe('API Auth & Work Permissions Middleware', () => {
     expect(perm.isWorkAdmin).toBe(false);
   });
 
+  it('identifies ifti.k.hoq@gmail.com as global main admin by default', async () => {
+    const authContext = await verifyAuthHeader('Bearer dev_token_user_admin');
+    expect(authContext.isMainAdmin).toBe(true);
+    expect(authContext.email).toBe('ifti.k.hoq@gmail.com');
+  });
+
   it('rejects unassigned users with forbidden access (isAllowed = false)', () => {
     const intruder: AuthUserContext = {
       uid: 'unassigned_guy',
