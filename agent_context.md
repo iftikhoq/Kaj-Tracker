@@ -52,3 +52,4 @@
   - Never expose private keys or service account credentials in client code or Git.
   - Use environment variables (`GOOGLE_SERVICE_ACCOUNT_JSON`, `FIREBASE_ADMIN_JSON`, `MAIN_ADMIN_EMAIL`, etc.).
   - Provide a local mock/demo store capability so the app runs out-of-the-box for development and verification before production credentials are plugged in.
+

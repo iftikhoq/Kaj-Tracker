@@ -4,6 +4,17 @@ All versions, dates, and detailed change logs for Kaj Tracker are maintained in 
 
 ---
 
+## [ver 1.0.1] - 2026-10-28
+### Status: UI Polish & Dropdown Overflow Fix
+- **Header Banner Overflow Resolution:**
+  - Removed `overflow-hidden` from the outer container of [`HeaderBanner`](file:///e:/Projects/Kaj%20Tracker/src/components/layout/HeaderBanner.tsx#L116) which was clipping absolute child overlays.
+  - Confined `overflow-hidden` and `rounded-2xl` strictly to the background radial glow / watermark layer so glow effects remain bounded while allowing interactive dropdown menus to float freely over content.
+  - Elevated [`HeaderBanner`](file:///e:/Projects/Kaj%20Tracker/src/components/layout/HeaderBanner.tsx#L116) to `z-20` so dropdown popovers stay atop the subsequent page content.
+- **Work Switcher Positioning:**
+  - Adjusted dropdown menu in [`WorkSwitcher`](file:///e:/Projects/Kaj%20Tracker/src/components/layout/WorkSwitcher.tsx#L57) with `top-full right-0 mt-2` and `z-50 backdrop-blur-xl` for crisp, unclipped presentation.
+
+---
+
 ## [ver 1.0.0] - 2026-10-28
 ### Status: Initial Project Release & Full Stack Implementation
 
@@ -50,3 +61,4 @@ All versions, dates, and detailed change logs for Kaj Tracker are maintained in 
    - User investment inline editing.
    - Category expense breakdowns with charts and visual progress bars.
    - Print-styled PDF export pages for work summaries, expense ledgers, user statements, and reimbursement logs.
+

@@ -251,3 +251,4 @@ describe('Kaj Tracker Financial Math Engine', () => {
     expect(stats.budgetUtilizationPercent).toBe(120);
   });
 });
+

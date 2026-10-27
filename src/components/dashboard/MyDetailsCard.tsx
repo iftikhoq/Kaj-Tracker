@@ -143,3 +143,4 @@ export const MyDetailsCard: React.FC<MyDetailsCardProps> = ({ summary, onRefresh
     </div>
   );
 };
+

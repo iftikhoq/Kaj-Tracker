@@ -315,3 +315,4 @@ export const dataStore = {
     setStored(STORAGE_KEYS.AUDIT_LOGS, INITIAL_AUDIT_LOGS);
   },
 };
+

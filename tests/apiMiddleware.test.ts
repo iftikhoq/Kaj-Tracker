@@ -60,3 +60,4 @@ describe('API Auth & Work Permissions Middleware', () => {
     expect(perm.isWorkAdmin).toBe(false);
   });
 });
+

@@ -378,3 +378,4 @@ export const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClos
     </div>
   );
 };
+

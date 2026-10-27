@@ -55,7 +55,7 @@ export const WorkSwitcher: React.FC = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 md:left-0 mt-2 w-72 rounded-2xl bg-slate-900 border border-slate-700/80 shadow-2xl p-2 z-50 modal-enter text-xs">
+        <div className="absolute right-0 top-full mt-2 w-72 md:w-80 rounded-2xl bg-slate-900 border border-slate-700/90 shadow-2xl p-2 z-50 modal-enter text-xs backdrop-blur-xl">
           <div className="px-3 py-2 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
             <span>{t('banner.switchWork')}</span>
             <span className="text-emerald-400">{works.length}</span>
@@ -111,3 +111,4 @@ export const WorkSwitcher: React.FC = () => {
     </div>
   );
 };
+

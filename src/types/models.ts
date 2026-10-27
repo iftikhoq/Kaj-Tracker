@@ -104,3 +104,4 @@ export interface CategorySummary {
   count: number;
   percentage: number;
 }
+

@@ -43,3 +43,4 @@ export async function signOutFirebase(): Promise<void> {
     await fbSignOut(auth);
   }
 }
+

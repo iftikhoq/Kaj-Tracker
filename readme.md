@@ -92,3 +92,4 @@ Kaj Tracker is configured out-of-the-box for Vercel:
 1. Connect your GitHub repository to Vercel.
 2. Add your environment variables in the Vercel Dashboard (`GOOGLE_SERVICE_ACCOUNT_JSON`, `FIREBASE_ADMIN_JSON`, `MAIN_ADMIN_EMAIL`, `SHEET_ID`).
 3. Deploy! The `/api` serverless endpoints and Vite SPA frontend will build and run seamlessly together.
+

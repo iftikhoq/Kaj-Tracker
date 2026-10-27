@@ -50,3 +50,4 @@ export const WaitingApprovalPage: React.FC = () => {
     </div>
   );
 };
+

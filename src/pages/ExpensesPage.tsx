@@ -318,3 +318,4 @@ export const ExpensesPage: React.FC = () => {
     </div>
   );
 };
+

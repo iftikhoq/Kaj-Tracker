@@ -30,3 +30,4 @@
    - Work Admin is identified by `createdBy` in the `Works` sheet tab.
    - Only a Work Admin or Main Admin can reimburse personal expenses or manage member assignments for a work.
    - Non-assigned users cannot view work data and must see a waiting screen.
+

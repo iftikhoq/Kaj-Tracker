@@ -130,3 +130,4 @@ export const RecentExpensesTable: React.FC<RecentExpensesTableProps> = ({ costin
     </div>
   );
 };
+
