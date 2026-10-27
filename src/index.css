@@ -1,0 +1,87 @@
+@import './transitions.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-100 text-slate-800 antialiased font-sans;
+  }
+}
+
+/* Depth Shading Cards (replacing plain flat borders) */
+.card-depth {
+  @apply bg-white rounded-2xl shadow-depth border border-slate-200/70 transition-all duration-200;
+}
+
+.card-depth-subtle {
+  @apply bg-white/90 backdrop-blur-sm rounded-xl shadow-depth-sm border border-slate-200/60;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.5);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.8);
+}
+
+/* High-fidelity Print Styles for Browser Save as PDF */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 11pt !important;
+  }
+
+  /* Hide navigation, top bars, buttons, and floating widgets in print */
+  .no-print,
+  aside,
+  header,
+  nav,
+  button,
+  .btn-print-hide {
+    display: none !important;
+  }
+
+  /* Make report container full width with no shadows */
+  .printable-area {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* Avoid page breaks inside table rows */
+  table, tr, td, th {
+    page-break-inside: avoid !important;
+  }
+
+  /* Crisp table borders */
+  table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+
+  th, td {
+    border: 1px solid #cbd5e1 !important;
+    padding: 6px 10px !important;
+  }
+
+  th {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+    font-weight: 600 !important;
+  }
+}
