@@ -5,10 +5,13 @@ import { batchReadAllTabs, appendRow, updateRowById, SHEET_TABS } from './sheets
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const authUser = await verifyAuthHeader(req.headers.authorization);
-    const spreadsheetId = process.env.SHEET_ID;
+    const spreadsheetId = (req.headers['x-sheet-id'] as string) || (req.query.sheetId as string) || process.env.SHEET_ID;
 
     if (!spreadsheetId) {
-      return res.status(500).json({ error: 'SHEET_ID is not configured' });
+      if (req.method === 'GET') {
+        return res.status(200).json({ users: [], workUsers: [] });
+      }
+      return res.status(400).json({ error: 'Spreadsheet ID is not configured' });
     }
 
     if (req.method === 'GET') {

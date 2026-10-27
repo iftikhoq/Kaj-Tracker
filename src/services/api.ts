@@ -25,6 +25,19 @@ const getAuthToken = (): string => {
   return localStorage.getItem('kaj_auth_token') || 'dev_token_user_ifti_admin';
 };
 
+const getHeaders = (extra: Record<string, string> = {}): Record<string, string> => {
+  const settings = dataStore.getSettings();
+  const sheetId = settings.sheetId || '';
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${getAuthToken()}`,
+    ...extra,
+  };
+  if (sheetId) {
+    headers['x-sheet-id'] = sheetId;
+  }
+  return headers;
+};
+
 export const api = {
   // Works
   async getWorks(currentUser?: User | null): Promise<Work[]> {
@@ -32,7 +45,7 @@ export const api = {
       return dataStore.getWorks(currentUser);
     }
     const res = await fetch('/api/works', {
-      headers: { Authorization: `Bearer ${getAuthToken()}` },
+      headers: getHeaders(),
     });
     if (!res.ok) throw new Error('Failed to fetch works');
     const data = await res.json();
@@ -53,10 +66,7 @@ export const api = {
 
     const res = await fetch('/api/works', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(newWork),
     });
     if (!res.ok) throw new Error('Failed to create work');
@@ -70,10 +80,7 @@ export const api = {
     }
     const res = await fetch(`/api/works`, {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(work),
     });
     if (!res.ok) throw new Error('Failed to update work');
@@ -123,7 +130,7 @@ export const api = {
     }
 
     const res = await fetch(`/api/dashboard?workId=${workId}`, {
-      headers: { Authorization: `Bearer ${getAuthToken()}` },
+      headers: getHeaders(),
     });
     if (!res.ok) {
       const err = await res.json();
@@ -138,7 +145,7 @@ export const api = {
       return dataStore.getCostings(workId);
     }
     const res = await fetch(`/api/costings?workId=${workId}`, {
-      headers: { Authorization: `Bearer ${getAuthToken()}` },
+      headers: getHeaders(),
     });
     if (!res.ok) throw new Error('Failed to fetch costings');
     const data = await res.json();
@@ -151,10 +158,7 @@ export const api = {
     }
     const res = await fetch('/api/costings', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(costingData),
     });
     if (!res.ok) throw new Error('Failed to add costing');
@@ -168,10 +172,7 @@ export const api = {
     }
     const res = await fetch('/api/costings', {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ costingId, action: 'REIMBURSE' }),
     });
     if (!res.ok) throw new Error('Failed to reimburse costing');
@@ -185,7 +186,7 @@ export const api = {
     }
     const res = await fetch(`/api/costings?id=${costingId}`, {
       method: 'DELETE',
-      headers: { Authorization: `Bearer ${getAuthToken()}` },
+      headers: getHeaders(),
     });
     if (!res.ok) throw new Error('Failed to delete costing');
   },
@@ -235,7 +236,7 @@ export const api = {
       };
     }
     const res = await fetch('/api/settings', {
-      headers: { Authorization: `Bearer ${getAuthToken()}` },
+      headers: getHeaders(),
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
@@ -257,10 +258,7 @@ export const api = {
     }
     const res = await fetch('/api/settings', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ action: 'TEST_CONNECTION', spreadsheetId: sheetId }),
     });
     if (!res.ok) {
@@ -280,10 +278,7 @@ export const api = {
     }
     const res = await fetch('/api/settings', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
+      headers: getHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ action: 'INITIALIZE_SHEETS', spreadsheetId: sheetId }),
     });
     if (!res.ok) {

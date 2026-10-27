@@ -107,7 +107,8 @@ export function invalidateCache() {
 }
 
 /**
- * Batch read all tabs in one single Google Sheets API call
+ * Batch read all tabs in one single Google Sheets API call.
+ * Gracefully checks existing tab titles to avoid 'Unable to parse range' crashes on uninitialized sheets.
  */
 export async function batchReadAllTabs(spreadsheetId: string, forceFresh = false): Promise<Record<string, string[][]>> {
   const now = Date.now();
@@ -116,22 +117,36 @@ export async function batchReadAllTabs(spreadsheetId: string, forceFresh = false
   }
 
   const sheets = getGoogleSheetsClient();
-  const ranges = Object.values(SHEET_TABS).map((tab) => `${tab}!A:Z`);
 
-  const response = await sheets.spreadsheets.values.batchGet({
-    spreadsheetId,
-    ranges,
-  });
+  // 1. Check existing sheet metadata so we only request existing tabs
+  const meta = await sheets.spreadsheets.get({ spreadsheetId });
+  const existingTitles = new Set((meta.data.sheets || []).map((s) => s.properties?.title || ''));
 
-  const valueRanges = response.data.valueRanges || [];
   const result: Record<string, string[][]> = {};
+  const tabsToFetch: string[] = [];
 
-  const tabNames = Object.values(SHEET_TABS);
-  tabNames.forEach((tabName, index) => {
-    const rawRows = valueRanges[index]?.values || [];
-    // Omit header row (row 0)
-    result[tabName] = rawRows.slice(1);
-  });
+  for (const tabName of Object.values(SHEET_TABS)) {
+    result[tabName] = [];
+    if (existingTitles.has(tabName)) {
+      tabsToFetch.push(tabName);
+    }
+  }
+
+  // 2. Fetch only existing tabs
+  if (tabsToFetch.length > 0) {
+    const ranges = tabsToFetch.map((tab) => `${tab}!A:Z`);
+    const response = await sheets.spreadsheets.values.batchGet({
+      spreadsheetId,
+      ranges,
+    });
+
+    const valueRanges = response.data.valueRanges || [];
+    tabsToFetch.forEach((tabName, index) => {
+      const rawRows = valueRanges[index]?.values || [];
+      // Omit header row (row 0)
+      result[tabName] = rawRows.slice(1);
+    });
+  }
 
   sheetsCache = {
     data: result,

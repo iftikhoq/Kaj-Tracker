@@ -4,6 +4,17 @@ All versions, dates, and detailed change logs for Kaj Tracker are maintained in 
 
 ---
 
+## [ver 1.0.8] - 2026-10-28
+### Status: Sheet ID Header Fallback & Uninitialized Sheet Resilience
+- **Uninitialized Sheet Error Prevention ([`api/sheetsService.ts`](file:///e:/Projects/Kaj%20Tracker/api/sheetsService.ts)):**
+  - Updated `batchReadAllTabs` to inspect existing spreadsheet tab titles via metadata before reading ranges. Prevents Google API `400 Unable to parse range: Users!A:Z` when opening newly created, blank spreadsheets.
+- **Graceful Unconfigured Endpoint Handlers:**
+  - Updated [`api/works.ts`](file:///e:/Projects/Kaj%20Tracker/api/works.ts), [`api/dashboard.ts`](file:///e:/Projects/Kaj%20Tracker/api/dashboard.ts), [`api/costings.ts`](file:///e:/Projects/Kaj%20Tracker/api/costings.ts), [`api/users.ts`](file:///e:/Projects/Kaj%20Tracker/api/users.ts), and [`api/categories.ts`](file:///e:/Projects/Kaj%20Tracker/api/categories.ts) to accept `x-sheet-id` header or query fallback and return safe empty payloads (HTTP 200) instead of throwing 500 Internal Server Error when `SHEET_ID` is pending setup.
+- **Client Header Attachment ([`src/services/api.ts`](file:///e:/Projects/Kaj%20Tracker/src/services/api.ts)):**
+  - Added `getHeaders` sending `x-sheet-id` from client settings dynamically across all server requests.
+
+---
+
 ## [ver 1.0.7] - 2026-10-28
 ### Status: Serverless Production Dependencies Fix for Vercel
 - **Serverless Dependencies Relocation ([`package.json`](file:///e:/Projects/Kaj%20Tracker/package.json)):**

@@ -13,9 +13,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: 'workId query parameter is required' });
     }
 
-    const spreadsheetId = process.env.SHEET_ID;
+    const spreadsheetId = (req.headers['x-sheet-id'] as string) || (req.query.sheetId as string) || process.env.SHEET_ID;
     if (!spreadsheetId) {
-      return res.status(500).json({ error: 'SHEET_ID is not configured' });
+      return res.status(200).json({
+        stats: { totalBudget: 0, totalExpense: 0, totalInvestment: 0, remainingBudget: 0, isOverBudget: false },
+        userSummaries: [],
+        categorySummaries: [],
+        recentCostings: [],
+      });
     }
 
     const allTabs = await batchReadAllTabs(spreadsheetId);
