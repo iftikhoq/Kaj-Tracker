@@ -162,7 +162,7 @@ export const SettingsPage: React.FC = () => {
               <Database size={20} className="text-emerald-600" />
               <div>
                 <h3 className="font-bold text-sm text-slate-900">{t('settings.sheetSection')}</h3>
-                <p className="text-[11px] text-slate-500">গুগল স্প্রেডশিটই অ্যাপের মূল ডেটাবেস। কোনো আলাদা ডেটাবেস দরকার নেই।</p>
+                <p className="text-xs text-slate-500">গুগল স্প্রেডশিটই অ্যাপের মূল ডেটাবেস। কোনো আলাদা ডেটাবেস দরকার নেই।</p>
               </div>
             </div>
 
@@ -215,10 +215,10 @@ export const SettingsPage: React.FC = () => {
                     <span>সংযুক্ত স্প্রেডশিট: {testResult.title}</span>
                   </div>
                   {testResult.sheets && (
-                    <div className="text-[11px] text-emerald-700 flex flex-wrap gap-1.5 mt-1">
+                    <div className="text-xs text-emerald-700 flex flex-wrap gap-1.5 mt-1">
                       <span className="font-semibold">বিদ্যমান টেবিল:</span>
                       {testResult.sheets.map((s: string) => (
-                        <span key={s} className="px-1.5 py-0.5 bg-white border border-emerald-300 rounded text-[10px]">
+                        <span key={s} className="px-1.5 py-0.5 bg-white border border-emerald-300 rounded text-2xs">
                           {s}
                         </span>
                       ))}
@@ -235,7 +235,7 @@ export const SettingsPage: React.FC = () => {
               <ShieldCheck size={20} className="text-emerald-600" />
               <div>
                 <h3 className="font-bold text-sm text-slate-900">{t('settings.secretsSection')}</h3>
-                <p className="text-[11px] text-slate-500">নিরাপত্তার স্বার্থে প্রাইভেট কি ক্লায়েন্টে থাকে না, কেবল Vercel / .env এনভায়রনমেন্টে সংরক্ষিত হয়।</p>
+                <p className="text-xs text-slate-500">নিরাপত্তার স্বার্থে প্রাইভেট কি ক্লায়েন্টে থাকে না, কেবল Vercel / .env এনভায়রনমেন্টে সংরক্ষিত হয়।</p>
               </div>
             </div>
 
@@ -243,7 +243,7 @@ export const SettingsPage: React.FC = () => {
               <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center justify-between">
                 <div>
                   <div className="font-bold text-slate-800">{t('settings.googleServiceAccount')}</div>
-                  <div className="text-[10px] text-slate-400 font-mono mt-0.5">GOOGLE_SERVICE_ACCOUNT_JSON</div>
+                  <div className="text-2xs text-slate-400 font-mono mt-0.5">GOOGLE_SERVICE_ACCOUNT_JSON</div>
                 </div>
                 <span className="inline-flex items-center gap-1 text-emerald-700 font-bold bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
                   <CheckCircle size={13} />
@@ -254,7 +254,7 @@ export const SettingsPage: React.FC = () => {
               <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center justify-between">
                 <div>
                   <div className="font-bold text-slate-800">{t('settings.firebaseAdmin')}</div>
-                  <div className="text-[10px] text-slate-400 font-mono mt-0.5">FIREBASE_ADMIN_JSON</div>
+                  <div className="text-2xs text-slate-400 font-mono mt-0.5">FIREBASE_ADMIN_JSON</div>
                 </div>
                 <span className="inline-flex items-center gap-1 text-emerald-700 font-bold bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
                   <CheckCircle size={13} />
@@ -273,7 +273,7 @@ export const SettingsPage: React.FC = () => {
             <Layers size={20} className="text-emerald-600" />
             <div>
               <h3 className="font-bold text-sm text-slate-900">{t('settings.sharedLists')}</h3>
-              <p className="text-[11px] text-slate-500">যেকোনো সদস্য নতুন খরচের খাত বা একক যুক্ত করতে পারেন, যা সবার জন্য শেয়ার করা থাকে।</p>
+              <p className="text-xs text-slate-500">যেকোনো সদস্য নতুন খরচের খাত বা একক যুক্ত করতে পারেন, যা সবার জন্য শেয়ার করা থাকে।</p>
             </div>
           </div>
 
@@ -330,7 +330,7 @@ export const SettingsPage: React.FC = () => {
               {reasons.map((r) => (
                 <div key={r.id} className="p-3 rounded-xl border border-slate-200 bg-white shadow-depth-sm text-xs">
                   <div className="font-bold text-slate-800">{r.name}</div>
-                  {r.name_bn && <div className="text-[11px] text-emerald-700 font-medium">{r.name_bn}</div>}
+                  {r.name_bn && <div className="text-xs text-emerald-700 font-medium">{r.name_bn}</div>}
                 </div>
               ))}
             </div>
@@ -368,7 +368,7 @@ export const SettingsPage: React.FC = () => {
               {metrics.map((m) => (
                 <div key={m.id} className="p-3 rounded-xl border border-slate-200 bg-white shadow-depth-sm text-xs">
                   <div className="font-bold text-slate-800">{m.name}</div>
-                  {m.name_bn && <div className="text-[11px] text-emerald-700 font-medium">{m.name_bn}</div>}
+                  {m.name_bn && <div className="text-xs text-emerald-700 font-medium">{m.name_bn}</div>}
                 </div>
               ))}
             </div>

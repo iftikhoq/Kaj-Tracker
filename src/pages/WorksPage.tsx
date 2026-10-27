@@ -112,46 +112,46 @@ export const WorksPage: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between gap-2 mb-3">
                   <span
-                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
                       work.isCompleted
                         ? 'bg-slate-100 text-slate-600 border border-slate-200'
                         : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                     }`}
                   >
-                    {work.isCompleted ? <CheckCircle2 size={11} /> : <Clock size={11} />}
+                    {work.isCompleted ? <CheckCircle2 size={13} /> : <Clock size={13} />}
                     <span>{work.isCompleted ? t('works.completed') : t('works.active')}</span>
                   </span>
 
                   {isActiveSelected && (
-                    <span className="text-[10px] font-bold text-emerald-600 bg-emerald-100/80 px-2 py-0.5 rounded-md">
+                    <span className="text-xs font-bold text-emerald-600 bg-emerald-100/80 px-2.5 py-1 rounded-md">
                       {t('banner.activeWork')}
                     </span>
                   )}
                 </div>
 
-                <h3 className="font-bold text-base text-slate-900 leading-snug line-clamp-2">
+                <h3 className="font-bold text-lg text-slate-900 leading-snug line-clamp-2">
                   {title}
                 </h3>
 
                 {work.department && (
                   <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-2">
-                    <Building size={13} className="text-slate-400" />
+                    <Building size={14} className="text-slate-400" />
                     <span>{work.department}</span>
                   </div>
                 )}
 
                 {work.address && (
                   <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
-                    <MapPin size={13} className="text-slate-400 shrink-0" />
+                    <MapPin size={14} className="text-slate-400 shrink-0" />
                     <span className="truncate">{work.address}</span>
                   </div>
                 )}
 
                 <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                     {t('works.totalBudget')}
                   </span>
-                  <span className="font-black text-slate-900 text-sm">
+                  <span className="font-black text-slate-900 text-base">
                     {formatCurrency(work.totalBudget, lang)}
                   </span>
                 </div>

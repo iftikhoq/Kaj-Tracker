@@ -45,7 +45,7 @@ export const StatCards: React.FC<StatCardsProps> = ({ stats }) => {
             <div className="text-2xl font-black text-slate-900 tracking-tight">
               {formatCurrency(stats.totalBudget, lang)}
             </div>
-            <div className="text-[11px] text-slate-400 mt-1 font-medium">
+            <div className="text-xs text-slate-500 mt-1 font-medium">
               প্রকল্পের নির্ধারিত মোট বরাদ্দ
             </div>
           </div>
@@ -65,7 +65,7 @@ export const StatCards: React.FC<StatCardsProps> = ({ stats }) => {
             <div className="text-2xl font-black text-amber-900 tracking-tight">
               {formatCurrency(stats.totalExpense, lang)}
             </div>
-            <div className="text-[11px] text-slate-400 mt-1 font-medium">
+            <div className="text-xs text-slate-500 mt-1 font-medium">
               বাজেট হতে প্রকৃত ব্যয়িত
             </div>
           </div>
@@ -85,7 +85,7 @@ export const StatCards: React.FC<StatCardsProps> = ({ stats }) => {
             <div className="text-2xl font-black text-teal-900 tracking-tight">
               {formatCurrency(stats.totalInvestment, lang)}
             </div>
-            <div className="text-[11px] text-slate-400 mt-1 font-medium">
+            <div className="text-xs text-slate-500 mt-1 font-medium">
               সদস্যদের জমাকৃত মোট মূলধন
             </div>
           </div>
@@ -121,7 +121,7 @@ export const StatCards: React.FC<StatCardsProps> = ({ stats }) => {
             >
               {formatCurrency(stats.remainingBudget, lang)}
             </div>
-            <div className="flex items-center justify-between text-[11px] text-slate-500 mt-1.5 font-semibold">
+            <div className="flex items-center justify-between text-xs text-slate-500 mt-1.5 font-semibold">
               <span>{t('dashboard.budgetUtilization')}</span>
               <span>{formatNumber(utilization, lang)}%</span>
             </div>

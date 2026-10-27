@@ -91,7 +91,7 @@ export const LoginPage: React.FC = () => {
           {/* Divider */}
           <div className="relative py-2 flex items-center justify-center">
             <div className="border-t border-slate-800 w-full" />
-            <span className="bg-slate-900 px-3 text-[11px] text-slate-500 uppercase tracking-wider font-semibold">
+            <span className="bg-slate-900 px-3 text-xs text-slate-400 uppercase tracking-wider font-semibold">
               {t('auth.demoMode')}
             </span>
           </div>
@@ -100,24 +100,24 @@ export const LoginPage: React.FC = () => {
           <div className="grid grid-cols-2 gap-2.5">
             <button
               onClick={() => handleDemoLogin('main_admin')}
-              className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700/80 text-emerald-400 border border-slate-700 font-semibold text-xs transition-colors"
+              className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700/80 text-emerald-400 border border-slate-700 font-semibold text-sm transition-colors"
             >
-              <ShieldCheck size={14} />
+              <ShieldCheck size={16} />
               <span>{t('auth.demoAdmin')}</span>
             </button>
 
             <button
               onClick={() => handleDemoLogin('user')}
-              className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700 font-semibold text-xs transition-colors"
+              className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700 font-semibold text-sm transition-colors"
             >
-              <UserCheck size={14} />
+              <UserCheck size={16} />
               <span>{t('auth.demoUser')}</span>
             </button>
           </div>
         </div>
 
         {/* Footnote */}
-        <div className="mt-8 pt-4 border-t border-slate-800/80 text-[11px] text-slate-500">
+        <div className="mt-8 pt-4 border-t border-slate-800/80 text-xs text-slate-400">
           <span>গুগল স্প্রেডশিট সমর্থিত সুরক্ষিত কার্য ও ব্যয় ব্যবস্থাপনা প্ল্যাটফর্ম</span>
         </div>
       </div>

@@ -42,11 +42,11 @@ export const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories }
   return (
     <div className="card-depth p-5 flex flex-col h-full">
       <div className="flex items-center justify-between pb-3 border-b border-slate-200/80 mb-2">
-        <h3 className="font-bold text-sm text-slate-800 flex items-center gap-2">
-          <ChartIcon size={16} className="text-emerald-600" />
+        <h3 className="font-bold text-base text-slate-800 flex items-center gap-2">
+          <ChartIcon size={18} className="text-emerald-600" />
           <span>{t('categories.chartTitle')}</span>
         </h3>
-        <span className="text-[11px] font-semibold text-slate-400">
+        <span className="text-xs font-semibold text-slate-500">
           {categories.length} {lang === 'bn' ? 'টি খাত' : 'categories'}
         </span>
       </div>
@@ -74,7 +74,7 @@ export const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories }
                 borderColor: '#334155',
                 borderRadius: '0.75rem',
                 color: '#FFFFFF',
-                fontSize: '12px',
+                fontSize: '13px',
               }}
             />
           </PieChart>
@@ -82,7 +82,7 @@ export const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ categories }
       </div>
 
       {/* Legend Items */}
-      <div className="grid grid-cols-2 gap-2 mt-auto pt-3 border-t border-slate-100 text-[11px]">
+      <div className="grid grid-cols-2 gap-2 mt-auto pt-3 border-t border-slate-100 text-xs">
         {chartData.map((item, idx) => (
           <div key={idx} className="flex items-center gap-1.5 truncate">
             <span

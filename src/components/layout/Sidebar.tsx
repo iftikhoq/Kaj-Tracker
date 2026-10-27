@@ -47,7 +47,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
             <h2 className="font-bold text-white text-base tracking-wide flex items-center gap-1.5">
               <span>{t('app.title')}</span>
             </h2>
-            <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">
+            <span className="text-xs text-emerald-400 font-bold uppercase tracking-wider">
               {t('app.version')}
             </span>
           </div>
@@ -74,7 +74,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
               to={item.path}
               onClick={onCloseMobile}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all duration-200 ${
+                `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                   isActive
                     ? 'bg-emerald-600 text-white font-semibold shadow-md shadow-emerald-950/40 border-l-4 border-emerald-300'
                     : 'text-slate-300 hover:bg-slate-800/70 hover:text-emerald-400'
@@ -104,10 +104,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
           )}
 
           <div className="flex flex-col truncate">
-            <strong className="text-xs text-white font-semibold truncate">
+            <strong className="text-sm text-white font-semibold truncate">
               {currentUser?.name_bn || currentUser?.name || 'User'}
             </strong>
-            <div className="flex items-center gap-1 text-[10px] text-emerald-400">
+            <div className="flex items-center gap-1 text-xs text-emerald-400">
               {isMainAdmin ? (
                 <>
                   <ShieldCheck size={11} />

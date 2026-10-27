@@ -56,7 +56,7 @@ export const MyDetailsCard: React.FC<MyDetailsCardProps> = ({ summary, onRefresh
           </div>
           <div>
             <h3 className="font-bold text-base text-white tracking-wide">{t('dashboard.myDetails')}</h3>
-            <span className="text-[11px] text-emerald-300 font-medium">
+            <span className="text-xs text-emerald-300 font-medium">
               {currentUser?.name_bn || currentUser?.name} ({currentUser?.email})
             </span>
           </div>
@@ -107,37 +107,37 @@ export const MyDetailsCard: React.FC<MyDetailsCardProps> = ({ summary, onRefresh
       <div className="relative z-10 grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
         {/* My Investment */}
         <div className="bg-white/5 p-3.5 rounded-xl border border-white/10">
-          <span className="text-[11px] text-slate-400 uppercase font-bold tracking-wider">
+          <span className="text-xs text-slate-300 uppercase font-bold tracking-wider">
             {t('dashboard.myInvestment')}
           </span>
           <div className="text-xl font-black text-emerald-400 mt-1">
             {formatCurrency(summary.investment, lang)}
           </div>
-          <p className="text-[10px] text-slate-400 mt-0.5">এই প্রকল্পে আপনার মোট প্রদত্ত মূলধন</p>
+          <p className="text-xs text-slate-400 mt-1">এই প্রকল্পে আপনার মোট প্রদত্ত মূলধন</p>
         </div>
 
         {/* My Personal Spending (Unreimbursed) */}
         <div className="bg-white/5 p-3.5 rounded-xl border border-white/10">
-          <span className="text-[11px] text-amber-300/80 uppercase font-bold tracking-wider flex items-center gap-1">
+          <span className="text-xs text-amber-300 uppercase font-bold tracking-wider flex items-center gap-1">
             <ShieldAlert size={12} className="text-amber-400" />
             <span>{t('dashboard.myPersonalSpending')}</span>
           </span>
           <div className="text-xl font-black text-amber-400 mt-1">
             {formatCurrency(summary.personalSpending, lang)}
           </div>
-          <p className="text-[10px] text-slate-400 mt-0.5">অ্যাডমিন কর্তৃক সমন্বয় বাকি রয়েছে</p>
+          <p className="text-xs text-slate-400 mt-1">অ্যাডমিন কর্তৃক সমন্বয় বাকি রয়েছে</p>
         </div>
 
         {/* My Spent from Budget */}
         <div className="bg-white/5 p-3.5 rounded-xl border border-white/10">
-          <span className="text-[11px] text-slate-400 uppercase font-bold tracking-wider flex items-center gap-1">
+          <span className="text-xs text-slate-300 uppercase font-bold tracking-wider flex items-center gap-1">
             <BadgeCheck size={12} className="text-blue-400" />
             <span>{t('dashboard.mySpentFromBudget')}</span>
           </span>
           <div className="text-xl font-black text-blue-300 mt-1">
             {formatCurrency(summary.spentFromBudget, lang)}
           </div>
-          <p className="text-[10px] text-slate-400 mt-0.5">কোম্পানি ফান্ড থেকে পরিশোধিত খরচ</p>
+          <p className="text-xs text-slate-400 mt-1">কোম্পানি ফান্ড থেকে পরিশোধিত খরচ</p>
         </div>
       </div>
     </div>

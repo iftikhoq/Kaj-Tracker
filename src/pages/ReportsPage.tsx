@@ -143,7 +143,7 @@ export const ReportsPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="text-right text-[11px] text-slate-500">
+            <div className="text-right text-xs text-slate-500">
               <div>{t('reports.printedOn')} {formatDateTime(new Date().toISOString(), lang)}</div>
               <div>মুদ্রণকারী: {currentUser?.name_bn || currentUser?.name}</div>
             </div>
@@ -156,19 +156,19 @@ export const ReportsPage: React.FC = () => {
             {/* 4 Financial Stat Boxes */}
             <div className="grid grid-cols-4 gap-3 text-center">
               <div className="p-3 bg-slate-50 border border-slate-300 rounded-lg">
-                <div className="text-[10px] uppercase font-bold text-slate-500">{t('dashboard.totalBudget')}</div>
+                <div className="text-xs uppercase font-bold text-slate-500">{t('dashboard.totalBudget')}</div>
                 <div className="text-lg font-black text-slate-900 mt-1">{formatCurrency(stats.totalBudget, lang)}</div>
               </div>
               <div className="p-3 bg-slate-50 border border-slate-300 rounded-lg">
-                <div className="text-[10px] uppercase font-bold text-slate-500">{t('dashboard.totalExpense')}</div>
+                <div className="text-xs uppercase font-bold text-slate-500">{t('dashboard.totalExpense')}</div>
                 <div className="text-lg font-black text-amber-900 mt-1">{formatCurrency(stats.totalExpense, lang)}</div>
               </div>
               <div className="p-3 bg-slate-50 border border-slate-300 rounded-lg">
-                <div className="text-[10px] uppercase font-bold text-slate-500">{t('dashboard.totalInvestment')}</div>
+                <div className="text-xs uppercase font-bold text-slate-500">{t('dashboard.totalInvestment')}</div>
                 <div className="text-lg font-black text-teal-900 mt-1">{formatCurrency(stats.totalInvestment, lang)}</div>
               </div>
               <div className="p-3 bg-slate-50 border border-slate-300 rounded-lg">
-                <div className="text-[10px] uppercase font-bold text-slate-500">{t('dashboard.remainingBudget')}</div>
+                <div className="text-xs uppercase font-bold text-slate-500">{t('dashboard.remainingBudget')}</div>
                 <div className={`text-lg font-black mt-1 ${stats.isOverBudget ? 'text-red-600' : 'text-emerald-900'}`}>
                   {formatCurrency(stats.remainingBudget, lang)}
                 </div>
@@ -253,7 +253,7 @@ export const ReportsPage: React.FC = () => {
                     <td className="p-2 border border-slate-300 whitespace-nowrap">{formatDate(c.createdAt, lang)}</td>
                     <td className="p-2 border border-slate-300">
                       <div className="font-semibold">{c.reasonName || c.reasonId}</div>
-                      {c.note && <div className="text-[10px] text-slate-500 italic">{c.note}</div>}
+                      {c.note && <div className="text-xs text-slate-500 italic">{c.note}</div>}
                     </td>
                     <td className="p-2 border border-slate-300">{c.userName}</td>
                     <td className="p-2 border border-slate-300">
@@ -361,7 +361,7 @@ export const ReportsPage: React.FC = () => {
                       <td className="p-2 border border-slate-300">{formatDate(c.createdAt, lang)}</td>
                       <td className="p-2 border border-slate-300 font-semibold">{c.reasonName || c.reasonId}</td>
                       <td className="p-2 border border-slate-300">{c.userName}</td>
-                      <td className="p-2 border border-slate-300 font-mono text-[11px]">{formatDateTime(c.reimbursedAt, lang)}</td>
+                      <td className="p-2 border border-slate-300 font-mono text-xs">{formatDateTime(c.reimbursedAt, lang)}</td>
                       <td className="p-2 border border-slate-300 font-semibold">{c.reimbursedBy}</td>
                       <td className="p-2 border border-slate-300 text-right font-black">{formatCurrency(c.costAmount, lang)}</td>
                     </tr>
@@ -373,7 +373,7 @@ export const ReportsPage: React.FC = () => {
         )}
 
         {/* Document Footer Signatures */}
-        <div className="mt-16 pt-8 border-t border-slate-300 grid grid-cols-3 gap-6 text-center text-[11px] text-slate-600">
+        <div className="mt-16 pt-8 border-t border-slate-300 grid grid-cols-3 gap-6 text-center text-xs text-slate-600">
           <div>
             <div className="border-t border-dashed border-slate-400 w-32 mx-auto mb-1" />
             <span>হিসাব প্রস্তুতকারী</span>

@@ -148,7 +148,7 @@ export const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClos
                 <button
                   type="button"
                   onClick={() => setIsAddingReason(true)}
-                  className="text-emerald-700 hover:text-emerald-800 font-semibold text-[11px]"
+                  className="text-emerald-700 hover:text-emerald-800 font-semibold text-xs"
                 >
                   {t('expenses.addNewReason')}
                 </button>
@@ -168,14 +168,14 @@ export const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClos
                 <button
                   type="button"
                   onClick={handleCreateReason}
-                  className="px-3 py-1.5 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700"
+                  className="px-3 py-1.5 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 text-xs"
                 >
                   {t('common.save')}
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsAddingReason(false)}
-                  className="px-2 py-1.5 text-slate-500 hover:text-slate-700"
+                  className="px-2 py-1.5 text-slate-500 hover:text-slate-700 text-xs"
                 >
                   {t('common.cancel')}
                 </button>
@@ -185,7 +185,7 @@ export const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClos
                 value={reasonId}
                 onChange={(e) => setReasonId(e.target.value)}
                 required
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-slate-800"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-slate-800 text-xs"
               >
                 {reasons.map((r) => (
                   <option key={r.id} value={r.id}>
@@ -199,7 +199,7 @@ export const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClos
           {/* Cost Amount & Source */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="font-semibold text-slate-700 flex items-center gap-1.5 mb-1.5">
+              <label className="font-semibold text-slate-700 flex items-center gap-1.5 mb-1.5 text-xs">
                 <DollarSign size={13} className="text-emerald-600" />
                 <span>{t('expenses.costAmount')} *</span>
               </label>
@@ -219,10 +219,10 @@ export const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClos
             </div>
 
             <div>
-              <label className="font-semibold text-slate-700 mb-1.5 block">
+              <label className="font-semibold text-slate-700 mb-1.5 block text-xs">
                 {t('expenses.source')} *
               </label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2 text-xs">
                 <button
                   type="button"
                   onClick={() => setSource('BUDGET')}
@@ -250,7 +250,7 @@ export const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClos
           </div>
 
           {source === 'PERSONAL' && (
-            <div className="flex items-start gap-2 p-2.5 bg-amber-50 rounded-xl border border-amber-200/80 text-amber-800 text-[11px]">
+            <div className="flex items-start gap-2 p-2.5 bg-amber-50 rounded-xl border border-amber-200/80 text-amber-800 text-xs">
               <AlertCircle size={15} className="shrink-0 mt-0.5 text-amber-600" />
               <span>{t('expenses.sourceNote')}</span>
             </div>
@@ -259,7 +259,7 @@ export const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClos
           {/* Material Amount & Metric (Optional) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="font-semibold text-slate-700 mb-1.5 block">
+              <label className="font-semibold text-slate-700 mb-1.5 block text-xs">
                 {t('expenses.materialAmount')}
               </label>
               <input
@@ -269,13 +269,13 @@ export const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClos
                 placeholder="Ex: 50"
                 value={materialAmount}
                 onChange={(e) => setMaterialAmount(e.target.value)}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-xs"
               />
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="font-semibold text-slate-700 flex items-center gap-1.5">
+                <label className="font-semibold text-slate-700 flex items-center gap-1.5 text-xs">
                   <Scale size={13} className="text-emerald-600" />
                   <span>{t('expenses.metric')}</span>
                 </label>
@@ -283,7 +283,7 @@ export const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClos
                   <button
                     type="button"
                     onClick={() => setIsAddingMetric(true)}
-                    className="text-emerald-700 hover:text-emerald-800 font-semibold text-[11px]"
+                    className="text-emerald-700 hover:text-emerald-800 font-semibold text-xs"
                   >
                     {t('expenses.addNewMetric')}
                   </button>

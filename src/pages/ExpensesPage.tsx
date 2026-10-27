@@ -184,9 +184,9 @@ export const ExpensesPage: React.FC = () => {
 
           {/* Quick Summary Pill */}
           <div className="flex flex-col justify-end">
-            <div className="p-2 bg-slate-900 text-white rounded-xl flex items-center justify-between">
-              <span className="text-[11px] text-slate-400 font-medium">{filteredCostings.length} টি খরচ</span>
-              <span className="font-black text-emerald-400 text-sm">{formatCurrency(filteredTotal, lang)}</span>
+            <div className="p-2.5 bg-slate-900 text-white rounded-xl flex items-center justify-between">
+              <span className="text-xs text-slate-300 font-medium">{filteredCostings.length} টি খরচ</span>
+              <span className="font-black text-emerald-400 text-base">{formatCurrency(filteredTotal, lang)}</span>
             </div>
           </div>
         </div>
@@ -196,7 +196,7 @@ export const ExpensesPage: React.FC = () => {
       <div className="card-depth overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
-            <thead className="bg-slate-900 text-slate-200 uppercase tracking-wider text-[11px] font-bold">
+            <thead className="bg-slate-900 text-slate-200 uppercase tracking-wider text-xs font-bold">
               <tr>
                 <th className="p-4">{t('expenses.date')}</th>
                 <th className="p-4">{t('expenses.reason')}</th>
@@ -210,7 +210,7 @@ export const ExpensesPage: React.FC = () => {
             <tbody className="divide-y divide-slate-100">
               {filteredCostings.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-slate-400">
+                  <td colSpan={7} className="py-12 text-center text-slate-400 text-xs">
                     {t('expenses.noExpenses')}
                   </td>
                 </tr>
@@ -229,7 +229,7 @@ export const ExpensesPage: React.FC = () => {
                       <td className="p-4">
                         <div className="font-bold text-slate-900 text-sm">{c.reasonName || c.reasonId}</div>
                         {c.note && (
-                          <div className="text-[11px] text-slate-500 mt-0.5 line-clamp-1 italic">
+                          <div className="text-xs text-slate-500 mt-0.5 line-clamp-1 italic">
                             {c.note}
                           </div>
                         )}
@@ -251,22 +251,22 @@ export const ExpensesPage: React.FC = () => {
 
                       <td className="p-4 whitespace-nowrap">
                         {c.source === 'BUDGET' ? (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                             <CheckCircle size={12} />
                             <span>{t('expenses.statusBudget')}</span>
                           </span>
                         ) : isReimbursed ? (
                           <div className="inline-flex flex-col">
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
                               <CheckCircle size={12} />
                               <span>{t('expenses.statusReimbursed')}</span>
                             </span>
-                            <span className="text-[9px] text-slate-400 mt-0.5">
+                            <span className="text-2xs text-slate-400 mt-0.5">
                               {formatDate(c.reimbursedAt, lang)}
                             </span>
                           </div>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200">
                             <Clock size={12} />
                             <span>{t('expenses.statusPersonal')}</span>
                           </span>

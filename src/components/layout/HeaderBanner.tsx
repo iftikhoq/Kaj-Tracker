@@ -47,7 +47,7 @@ function LiveClock({ lang }: { lang: 'bn' | 'en' }) {
           second: '2-digit',
         })}
       </div>
-      <div className="text-emerald-200/80 text-[11px] mt-0.5 font-medium">
+      <div className="text-emerald-200/90 text-xs mt-0.5 font-medium">
         {time.toLocaleDateString(lang === 'bn' ? 'bn-BD' : 'en-US', {
           weekday: 'short',
           month: 'short',
@@ -114,7 +114,7 @@ export const HeaderBanner: React.FC = () => {
   const greeting = getGreeting(lang);
 
   return (
-    <div className="relative z-10 rounded-2xl mb-6 bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 shadow-depth-lg border border-slate-700/60 no-print">
+    <div className="relative z-30 rounded-2xl mb-6 bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 shadow-depth-lg border border-slate-700/60 no-print">
       {/* Decorative Radial Glows and Watermark (clipped to rounded corners) */}
       <div aria-hidden="true" className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
         <div className="absolute -right-10 -top-10 w-72 h-72 rounded-full bg-emerald-500/10 blur-3xl" />
@@ -137,7 +137,7 @@ export const HeaderBanner: React.FC = () => {
             {meta.icon}
           </div>
           <div>
-            <div className="text-[11px] font-bold tracking-widest uppercase text-emerald-300 flex items-center gap-2 mb-1">
+            <div className="text-xs font-bold tracking-wider uppercase text-emerald-300 flex items-center gap-2 mb-1">
               <span>{greeting}, {currentUser?.name_bn || currentUser?.name?.split(' ')[0] || 'User'}</span>
               <span className="text-white/40">·</span>
               <span className="text-slate-300 font-normal">{t('banner.executive')}</span>
@@ -145,7 +145,7 @@ export const HeaderBanner: React.FC = () => {
             <h1 className="text-xl md:text-2xl font-bold text-white tracking-tight leading-tight">
               {meta.title}
             </h1>
-            <p className="text-xs text-slate-300/80 mt-1 max-w-xl line-clamp-1">
+            <p className="text-sm text-slate-300/90 mt-1 max-w-xl line-clamp-1">
               {meta.subtitle}
             </p>
           </div>

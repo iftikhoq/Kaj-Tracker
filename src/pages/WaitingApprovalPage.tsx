@@ -19,20 +19,20 @@ export const WaitingApprovalPage: React.FC = () => {
         <h2 className="text-xl font-bold text-white tracking-tight">
           {t('auth.waitingTitle')}
         </h2>
-        <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+        <p className="text-sm text-slate-300 mt-2 leading-relaxed">
           {t('auth.waitingSubtitle')}
         </p>
 
         <div className="my-6 p-3 bg-slate-800/60 rounded-xl border border-slate-700/60 text-xs text-slate-300">
           <div className="font-semibold text-white">{currentUser?.name_bn || currentUser?.name}</div>
-          <div className="text-[11px] text-slate-400 font-mono mt-0.5">{currentUser?.email}</div>
+          <div className="text-xs text-slate-400 font-mono mt-0.5">{currentUser?.email}</div>
         </div>
 
         <div className="space-y-3">
           <button
             onClick={() => refreshWorks()}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-colors"
+            className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition-colors"
           >
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
             <span>{t('auth.refreshStatus')}</span>

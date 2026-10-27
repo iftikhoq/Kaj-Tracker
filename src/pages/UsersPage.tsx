@@ -129,7 +129,7 @@ export const UsersPage: React.FC = () => {
             <PiggyBank size={20} />
           </div>
           <div>
-            <span className="text-[10px] uppercase font-bold text-emerald-400 tracking-wider">
+            <span className="text-xs uppercase font-bold text-emerald-400 tracking-wider">
               {t('dashboard.totalInvestment')}
             </span>
             <div className="text-xl font-black">{formatCurrency(totalInvestment, lang)}</div>
@@ -144,7 +144,7 @@ export const UsersPage: React.FC = () => {
       <div className="card-depth overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
-            <thead className="bg-slate-900 text-slate-200 uppercase tracking-wider text-[11px] font-bold">
+            <thead className="bg-slate-900 text-slate-200 uppercase tracking-wider text-xs font-bold">
               <tr>
                 <th className="p-4">{t('users.name')}</th>
                 <th className="p-4 text-right">{t('users.investment')}</th>
@@ -168,15 +168,15 @@ export const UsersPage: React.FC = () => {
                           {s.userName.charAt(0)}
                         </div>
                         <div>
-                          <div className="font-bold text-slate-900 flex items-center gap-1.5">
+                          <div className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
                             <span>{s.userName}</span>
                             {isMe && (
-                              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-100 text-emerald-800">
+                              <span className="px-1.5 py-0.5 rounded text-2xs font-bold bg-emerald-100 text-emerald-800">
                                 {lang === 'bn' ? 'আপনি' : 'You'}
                               </span>
                             )}
                           </div>
-                          <div className="text-[11px] text-slate-400">{s.userEmail}</div>
+                          <div className="text-xs text-slate-400 mt-0.5">{s.userEmail}</div>
                         </div>
                       </div>
                     </td>

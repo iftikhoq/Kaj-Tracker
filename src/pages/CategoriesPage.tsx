@@ -53,15 +53,15 @@ export const CategoriesPage: React.FC = () => {
         <div className="lg:col-span-2">
           <div className="card-depth overflow-hidden">
             <div className="p-4 border-b border-slate-200/80 bg-slate-50 flex items-center justify-between">
-              <span className="font-bold text-xs text-slate-800">খাতভিত্তিক বিস্তারিত পরিসংখ্যান</span>
-              <span className="text-xs font-black text-emerald-700">
+              <span className="font-bold text-sm text-slate-800">খাতভিত্তিক বিস্তারিত পরিসংখ্যান</span>
+              <span className="text-sm font-black text-emerald-700">
                 মোট: {formatCurrency(totalExpense, lang)}
               </span>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
-                <thead className="bg-slate-900 text-slate-200 uppercase tracking-wider text-[11px] font-bold">
+                <thead className="bg-slate-900 text-slate-200 uppercase tracking-wider text-xs font-bold">
                   <tr>
                     <th className="p-4">{t('categories.reason')}</th>
                     <th className="p-4 text-center">{t('categories.count')}</th>
@@ -72,14 +72,14 @@ export const CategoriesPage: React.FC = () => {
                 <tbody className="divide-y divide-slate-100">
                   {categories.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="py-12 text-center text-slate-400">
+                      <td colSpan={4} className="py-12 text-center text-slate-400 text-xs">
                         {t('categories.noData')}
                       </td>
                     </tr>
                   ) : (
                     categories.map((c) => (
                       <tr key={c.reasonId} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="p-4 font-bold text-slate-900">
+                        <td className="p-4 font-bold text-slate-900 text-sm">
                           <div className="flex items-center gap-2">
                             <Tag size={14} className="text-emerald-600" />
                             <span>{lang === 'bn' && c.reasonNameBn ? c.reasonNameBn : c.reasonName}</span>

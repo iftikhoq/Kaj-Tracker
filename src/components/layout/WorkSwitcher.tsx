@@ -44,10 +44,10 @@ export const WorkSwitcher: React.FC = () => {
           <Briefcase size={13} />
         </div>
         <div className="flex flex-col text-left truncate">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-300/80">
+          <span className="text-xs uppercase font-bold tracking-wider text-emerald-300">
             {t('banner.activeWork')}
           </span>
-          <span className="font-semibold truncate leading-tight">
+          <span className="text-sm font-semibold truncate leading-tight">
             {displayName || t('banner.noWorkSelected')}
           </span>
         </div>
@@ -56,7 +56,7 @@ export const WorkSwitcher: React.FC = () => {
 
       {isOpen && (
         <div className="absolute right-0 top-full mt-2 w-72 md:w-80 rounded-2xl bg-slate-900 border border-slate-700/90 shadow-2xl p-2 z-50 modal-enter text-xs backdrop-blur-xl">
-          <div className="px-3 py-2 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+          <div className="px-3 py-2 border-b border-slate-800 text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
             <span>{t('banner.switchWork')}</span>
             <span className="text-emerald-400">{works.length}</span>
           </div>
@@ -84,7 +84,7 @@ export const WorkSwitcher: React.FC = () => {
                     <div className="truncate">
                       <div className="truncate font-medium">{title}</div>
                       {work.department && (
-                        <div className="text-[10px] text-slate-400 truncate">{work.department}</div>
+                        <div className="text-xs text-slate-400 truncate">{work.department}</div>
                       )}
                     </div>
                   </div>

@@ -61,7 +61,7 @@ export const RecentExpensesTable: React.FC<RecentExpensesTableProps> = ({ costin
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="border-b border-slate-200/80 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              <tr className="border-b border-slate-200/80 text-xs font-bold text-slate-500 uppercase tracking-wider">
                 <th className="py-2.5 px-3">{t('expenses.reason')}</th>
                 <th className="py-2.5 px-3">{t('expenses.spentBy')}</th>
                 <th className="py-2.5 px-3">{t('expenses.source')}</th>
@@ -77,34 +77,34 @@ export const RecentExpensesTable: React.FC<RecentExpensesTableProps> = ({ costin
                 return (
                   <tr key={c.costingId} className="hover:bg-slate-50/80 transition-colors">
                     <td className="py-3 px-3">
-                      <div className="font-bold text-slate-900">{c.reasonName || c.reasonId}</div>
-                      <div className="text-[10px] text-slate-400">{formatDate(c.createdAt, lang)}</div>
+                      <div className="font-bold text-slate-900 text-sm">{c.reasonName || c.reasonId}</div>
+                      <div className="text-xs text-slate-400 mt-0.5">{formatDate(c.createdAt, lang)}</div>
                     </td>
 
-                    <td className="py-3 px-3 text-slate-600 font-medium">
+                    <td className="py-3 px-3 text-slate-700 font-medium">
                       {c.userName}
                     </td>
 
                     <td className="py-3 px-3">
                       {c.source === 'BUDGET' ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                          <CheckCircle size={10} />
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          <CheckCircle size={12} />
                           <span>{t('expenses.statusBudget')}</span>
                         </span>
                       ) : isReimbursed ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-                          <CheckCircle size={10} />
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                          <CheckCircle size={12} />
                           <span>{t('expenses.statusReimbursed')}</span>
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">
-                          <Clock size={10} />
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200">
+                          <Clock size={12} />
                           <span>{t('expenses.statusPersonal')}</span>
                         </span>
                       )}
                     </td>
 
-                    <td className="py-3 px-3 text-right font-black text-slate-900">
+                    <td className="py-3 px-3 text-right font-black text-slate-900 text-sm">
                       {formatCurrency(c.costAmount, lang)}
                     </td>
 
@@ -112,10 +112,10 @@ export const RecentExpensesTable: React.FC<RecentExpensesTableProps> = ({ costin
                       {isPersonal && !isReimbursed && c.userId === currentUser?.uid && (
                         <button
                           onClick={() => handleReimburse(c)}
-                          className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-xs transition-colors"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-xs transition-colors"
                           title={t('expenses.reimburse')}
                         >
-                          <RefreshCw size={10} />
+                          <RefreshCw size={11} />
                           <span>{t('expenses.reimburse')}</span>
                         </button>
                       )}

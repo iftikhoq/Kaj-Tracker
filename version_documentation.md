@@ -4,6 +4,33 @@ All versions, dates, and detailed change logs for Kaj Tracker are maintained in 
 
 ---
 
+## [ver 1.0.5] - 2026-10-28
+### Status: Typography Scale Enlargement & Layout Polish
+- **Bengali & Latin Typography Scale Enhancement:**
+  - Expanded font size tokens in [`tailwind.config.js`](file:///e:/Projects/Kaj%20Tracker/tailwind.config.js) to improve legibility for complex Bengali conjunct characters (যুক্তবর্ণ) and upper/lower vowel diacritics:
+    - `xs`: `0.8125rem` (13px, was 12px) with `lineHeight: 1.25rem`
+    - `sm`: `0.925rem` (14.8px, was 14px) with `lineHeight: 1.375rem`
+    - `base`: `1.05rem` (16.8px, was 16px) with `lineHeight: 1.625rem`
+    - `lg`: `1.2rem` (19.2px, was 18px) with `lineHeight: 1.75rem`
+    - `xl`: `1.35rem` (21.6px, was 20px) with `lineHeight: 1.875rem`
+    - `2xl`: `1.65rem` (26.4px, was 24px) with `lineHeight: 2.125rem`
+  - Replaced all hardcoded micro font classes (`text-[9px]`, `text-[10px]`, `text-[11px]`) across the entire codebase with modern, responsive tokens (`text-xs`, `text-sm`, `text-2xs`).
+  - Refactored components and views for crisp layout spacing without overlap:
+    - [`MyDetailsCard.tsx`](file:///e:/Projects/Kaj%20Tracker/src/components/dashboard/MyDetailsCard.tsx): Upgraded metric titles, user tags, and sub-descriptions to `text-xs`.
+    - [`RecentExpensesTable.tsx`](file:///e:/Projects/Kaj%20Tracker/src/components/dashboard/RecentExpensesTable.tsx): Upgraded table headers, timestamps, and status pills to `text-xs` with expanded padding.
+    - [`ExpensesPage.tsx`](file:///e:/Projects/Kaj%20Tracker/src/pages/ExpensesPage.tsx): Standardized table headers, notes, and status indicators.
+    - [`CategoriesPage.tsx`](file:///e:/Projects/Kaj%20Tracker/src/pages/CategoriesPage.tsx) & [`CategoryPieChart.tsx`](file:///e:/Projects/Kaj%20Tracker/src/components/dashboard/CategoryPieChart.tsx): Upgraded chart legend and category breakdown tables.
+    - [`UsersPage.tsx`](file:///e:/Projects/Kaj%20Tracker/src/pages/UsersPage.tsx): Cleaned up user badges, emails, and investment counters.
+    - [`WorksPage.tsx`](file:///e:/Projects/Kaj%20Tracker/src/pages/WorksPage.tsx): Enlarged project card headings to `text-lg` and budget amounts to `text-base`.
+    - [`ReportsPage.tsx`](file:///e:/Projects/Kaj%20Tracker/src/pages/ReportsPage.tsx): Optimized print-ready financial statement stat boxes and document signatures.
+    - [`AddExpenseModal.tsx`](file:///e:/Projects/Kaj%20Tracker/src/components/expenses/AddExpenseModal.tsx): Upgraded form labels and action links.
+    - [`LoginPage.tsx`](file:///e:/Projects/Kaj%20Tracker/src/pages/LoginPage.tsx) & [`WaitingApprovalPage.tsx`](file:///e:/Projects/Kaj%20Tracker/src/pages/WaitingApprovalPage.tsx): Enhanced demo mode button text and explanatory instructions.
+- **Dropdown & Stacking Context Elevation:**
+  - Elevated [`HeaderBanner`](file:///e:/Projects/Kaj%20Tracker/src/components/layout/HeaderBanner.tsx) to `relative z-30` ensuring [`WorkSwitcher`](file:///e:/Projects/Kaj%20Tracker/src/components/layout/WorkSwitcher.tsx)'s project menu seamlessly overlays subsequent page content without being clipped.
+  - Confirmed all modals render cleanly via [`Modal.tsx`](file:///e:/Projects/Kaj%20Tracker/src/components/common/Modal.tsx) portal (`z-[100]`) above all headers and sidebars.
+
+---
+
 ## [ver 1.0.4] - 2026-10-28
 ### Status: Stacking Context & Portal Modal Elevation Fix
 - **Modal Stacking Context Resolution:**
