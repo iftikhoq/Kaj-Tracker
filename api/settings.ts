@@ -1,6 +1,6 @@
-import type { VercelRequest, VercelResponse } from './_lib/types';
-import { verifyAuthHeader } from './_lib/authMiddleware';
-import { getGoogleSheetsClient, initializeSpreadsheetTabs, getServiceAccountEmail } from './_lib/sheetsService';
+import type { VercelRequest, VercelResponse } from './_lib/types.js';
+import { verifyAuthHeader } from './_lib/authMiddleware.js';
+import { getGoogleSheetsClient, initializeSpreadsheetTabs, getServiceAccountEmail } from './_lib/sheetsService.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {

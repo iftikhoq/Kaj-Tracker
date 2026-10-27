@@ -1,5 +1,5 @@
-import type { VercelRequest, VercelResponse } from './_lib/types';
-import { verifyAuthHeader, checkWorkPermission } from './_lib/authMiddleware';
+import type { VercelRequest, VercelResponse } from './_lib/types.js';
+import { verifyAuthHeader, checkWorkPermission } from './_lib/authMiddleware.js';
 import {
   batchReadAllTabs,
   appendRow,
@@ -7,7 +7,7 @@ import {
   SHEET_TABS,
   getGoogleSheetsClient,
   invalidateCache,
-} from './_lib/sheetsService';
+} from './_lib/sheetsService.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {

@@ -1,5 +1,5 @@
 import admin from 'firebase-admin';
-import { parseServiceAccountCredentials } from './sheetsService';
+import { parseServiceAccountCredentials } from './sheetsService.js';
 
 // Initialize Firebase Admin lazily
 let isFirebaseInitialized = false;

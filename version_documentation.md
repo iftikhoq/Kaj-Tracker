@@ -4,6 +4,18 @@ All versions, dates, and detailed change logs for Kaj Tracker are maintained in 
 
 ---
 
+## [ver 1.0.10] - 2026-10-28
+### Status: Node ESM Strict Relative Import Extension Resolution (`.js`) & Serverless Decoupling
+- **Strict Node ESM Import Extensions (`.js`):**
+  - Resolved root cause of Vercel `FUNCTION_INVOCATION_FAILED` (HTTP 500) where Node ESM strictly enforces file extensions on relative specifiers for projects with `"type": "module"`.
+  - Updated all relative imports across `api/categories.ts`, `api/costings.ts`, `api/dashboard.ts`, `api/health.ts`, `api/settings.ts`, `api/users.ts`, `api/works.ts`, and `api/_lib/authMiddleware.ts` to include explicit `.js` extensions (`./_lib/types.js`, `./_lib/sheetsService.js`, `./_lib/authMiddleware.js`, etc.).
+- **Decoupled Serverless Backend from Frontend Source (`api/_lib/models.ts` & `api/_lib/mathEngine.ts`):**
+  - Created isolated backend data contracts and calculations in `api/_lib/` so Vercel Serverless Functions do not traverse into `../src/`, eliminating bundle tracing misses in production environments.
+- **Fail-Safe Health Route:**
+  - Enclosed `api/health.ts` in top-level try-catch block returning detailed JSON diagnostics to prevent runtime container exits.
+
+---
+
 ## [ver 1.0.9] - 2026-10-28
 ### Status: Vercel Serverless Architecture Isolation & Diagnostics
 - **Serverless Internal Helper Isolation (`api/_lib/`):**

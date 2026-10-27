@@ -1,8 +1,8 @@
-import type { VercelRequest, VercelResponse } from './_lib/types';
-import { verifyAuthHeader, checkWorkPermission } from './_lib/authMiddleware';
-import { batchReadAllTabs, SHEET_TABS } from './_lib/sheetsService';
-import { calculateDashboardStats, calculateUserExpenseSummaries, calculateCategorySummaries } from '../src/services/mathEngine';
-import { Work, Costing, WorkUser, User, Reason } from '../src/types/models';
+import type { VercelRequest, VercelResponse } from './_lib/types.js';
+import { verifyAuthHeader, checkWorkPermission } from './_lib/authMiddleware.js';
+import { batchReadAllTabs, SHEET_TABS } from './_lib/sheetsService.js';
+import { calculateDashboardStats, calculateUserExpenseSummaries, calculateCategorySummaries } from './_lib/mathEngine.js';
+import type { Work, Costing, WorkUser, User, Reason } from './_lib/models.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
