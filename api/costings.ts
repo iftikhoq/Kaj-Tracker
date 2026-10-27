@@ -130,9 +130,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const perm = checkWorkPermission(authUser, cWorkId, work[7], workUsers.map((r) => r[1]));
 
       if (action === 'REIMBURSE') {
-        // Reimbursement rule: ONLY work admin or main admin can press Reimburse!
-        if (!perm.isWorkAdmin && !authUser.isMainAdmin) {
-          return res.status(403).json({ error: 'Only a Work Admin or Main Admin can reimburse personal expenses' });
+        // Reimbursement rule: ONLY the expense owner can mark it as reimbursed
+        const expenseOwnerId = row[2];
+        if (expenseOwnerId !== authUser.uid) {
+          return res.status(403).json({ error: 'Only the expense owner can reimburse this personal expense' });
         }
 
         const costing: Costing = {
